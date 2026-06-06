@@ -3,115 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detector de Tom, Escala e Acordes</title>
+<title>Detector Musical</title>
 <style>
 :root {
-  --bg: #0c0c0d;
-  --s1: #161618;
-  --s2: #1e1e21;
-  --s3: #272729;
-  --b1: rgba(255,255,255,0.06);
-  --b2: rgba(255,255,255,0.12);
-  --b3: rgba(255,255,255,0.2);
-  --tx: #eeebe5;
-  --mu: #888480;
-  --hi: #4a4845;
-  --gr: #1cc97e;
-  --gr2: #0d6b42;
-  --grb: #091f14;
-  --bl: #4490ff;
-  --bl2: #1a4fa0;
-  --blb: #0a1830;
-  --am: #e8a230;
-  --amb: #281c08;
-  --re: #e04848;
-  --reb: #280c0c;
-  --pu: #9b72f5;
-  --pub: #1a1030;
-  --font: 'Segoe UI', system-ui, sans-serif;
+  --bg:#0b0b0c; --s1:#161618; --s2:#1e1e21; --s3:#272729; --s4:#303033;
+  --b1:rgba(255,255,255,.06); --b2:rgba(255,255,255,.11); --b3:rgba(255,255,255,.19);
+  --tx:#edeae4; --mu:#87837f; --hi:#4a4845; --lo:#2e2d2b;
+  --gr:#1cc97e; --gr2:#0c5e3a; --grb:#081a10;
+  --bl:#4490ff; --bl2:#1a4fa0; --blb:#08122a;
+  --am:#e8a030; --am2:#7a5010; --amb:#1e1508;
+  --re:#e04848; --reb:#1c0808;
+  --pu:#9b72f5; --pu2:#5530c0; --pub:#130d28;
+  --te:#22ccc4; --teb:#081e1d;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--tx);font-family:var(--font);min-height:100vh;padding:20px 16px 40px}
-.wrap{max-width:780px;margin:0 auto}
+body{background:var(--bg);color:var(--tx);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding:18px 14px 48px}
+.wrap{max-width:800px;margin:0 auto}
 
-/* Header */
-.hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}
-.hdr h1{font-size:19px;font-weight:600;letter-spacing:-.3px}
-.hdr p{font-size:12px;color:var(--mu);margin-top:3px}
-#btn-mic{display:flex;align-items:center;gap:7px;padding:9px 18px;font-size:13px;font-weight:500;border-radius:10px;border:1px solid var(--b2);background:var(--s1);color:var(--tx);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+/* ── Header ── */
+.hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+.hdr h1{font-size:18px;font-weight:600;letter-spacing:-.3px}
+.hdr p{font-size:11px;color:var(--mu);margin-top:3px}
+#btn-mic{display:flex;align-items:center;gap:7px;padding:9px 17px;font-size:13px;font-weight:500;border-radius:10px;border:1px solid var(--b2);background:var(--s1);color:var(--tx);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
 #btn-mic:hover{border-color:var(--b3);background:var(--s2)}
-#btn-mic.on{background:var(--reb);color:var(--re);border-color:var(--re)}
-#btn-mic svg{width:16px;height:16px;flex-shrink:0}
+#btn-mic.on{background:var(--reb);color:var(--re);border-color:rgba(224,72,72,.5)}
+.mic-svg{width:15px;height:15px;flex-shrink:0}
 
-/* Cards */
-.card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:15px 18px;margin-bottom:10px}
-.lbl{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--hi);margin-bottom:9px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-@media(max-width:480px){.g2{grid-template-columns:1fr}}
+/* ── Cards ── */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:13px;padding:14px 17px;margin-bottom:9px}
+.lbl{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--hi);margin-bottom:8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px}
+@media(max-width:500px){.g2{grid-template-columns:1fr}}
 
-/* Big note */
-#big-note{font-size:62px;font-weight:700;line-height:1;letter-spacing:-2px;color:var(--tx);transition:color .1s;font-variant-numeric:tabular-nums}
-#note-sub{font-size:12px;color:var(--mu);margin-top:5px;font-variant-numeric:tabular-nums}
+/* ── Note ── */
+#big-note{font-size:58px;font-weight:700;line-height:1;letter-spacing:-2px;font-variant-numeric:tabular-nums;transition:color .1s}
+#note-sub{font-size:11px;color:var(--mu);margin-top:5px;font-variant-numeric:tabular-nums}
 
-/* Key card */
-#key-main{font-size:24px;font-weight:600;letter-spacing:-.4px;line-height:1.15}
-#key-rel{font-size:12px;color:var(--mu);margin-top:4px}
-#key-scale{font-size:11px;color:var(--hi);margin-top:6px;line-height:1.6}
-.cbar-wrap{margin-top:10px;height:3px;background:var(--s3);border-radius:2px;overflow:hidden}
-#cbar{height:100%;width:0%;background:var(--gr);border-radius:2px;transition:width .4s ease}
-#cpct{font-size:10px;color:var(--hi);margin-top:4px;font-variant-numeric:tabular-nums}
+/* ── Key ── */
+#key-main{font-size:22px;font-weight:600;letter-spacing:-.4px}
+#key-rel{font-size:11px;color:var(--mu);margin-top:3px}
+#key-scale{font-size:10px;color:var(--hi);margin-top:5px;line-height:1.7}
+.cbar-wrap{margin-top:9px;height:2px;background:var(--s3);border-radius:1px;overflow:hidden}
+#cbar{height:100%;width:0%;background:var(--gr);border-radius:1px;transition:width .5s ease}
+#cpct{font-size:10px;color:var(--hi);margin-top:4px}
 
-/* Tuner */
-#tuner-canvas{display:block;width:100%;height:56px;border-radius:8px;background:var(--s2)}
+/* ── Tuner ── */
+#tuner-canvas{display:block;width:100%;height:54px;border-radius:8px;background:var(--s2)}
 
-/* Chord big display */
-#chord-big{font-size:42px;font-weight:700;letter-spacing:-.5px;color:var(--pu);line-height:1}
-#chord-notes{font-size:12px;color:var(--mu);margin-top:5px}
-#chord-quality{font-size:12px;margin-top:4px;color:var(--hi)}
+/* ── Chord ── */
+#chord-big{font-size:46px;font-weight:700;letter-spacing:-.5px;color:var(--pu);line-height:1;transition:all .15s}
+#chord-notes{font-size:11px;color:var(--mu);margin-top:4px;line-height:1.5}
+#chord-quality{font-size:11px;color:var(--hi);margin-top:3px}
 
-/* Chord history */
-.ch-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;min-height:38px}
-.ch-pill{display:inline-flex;align-items:center;justify-content:center;padding:5px 11px;border-radius:20px;font-size:13px;font-weight:600;background:var(--s2);color:var(--mu);border:1px solid var(--b1);transition:all .18s;flex-shrink:0}
-.ch-pill.cur{background:var(--pub);color:var(--pu);border-color:var(--pu);transform:scale(1.07);box-shadow:0 0 0 3px rgba(155,114,245,.15)}
+/* ── Chord history ── */
+.ch-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:36px}
+.ch-pill{display:inline-flex;align-items:center;justify-content:center;padding:4px 11px;border-radius:18px;font-size:13px;font-weight:600;background:var(--s2);color:var(--mu);border:1px solid var(--b1);transition:all .18s;flex-shrink:0}
+.ch-pill.cur{background:var(--pub);color:var(--pu);border-color:rgba(155,114,245,.5);transform:scale(1.07);box-shadow:0 0 0 3px rgba(155,114,245,.12)}
 .ch-pill.rec{background:var(--s3);color:var(--tx);border-color:var(--b2);animation:pop .2s ease}
 
-/* Note pills */
-.np-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;min-height:46px}
-.np{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;font-size:12px;font-weight:600;background:var(--s2);color:var(--mu);border:1px solid var(--b1);transition:all .18s;flex-shrink:0}
-.np .oct{font-size:9px;font-weight:400;opacity:.55}
-.np.cur{background:var(--grb);color:var(--gr);border-color:var(--gr2);transform:scale(1.18);box-shadow:0 0 0 3px rgba(28,201,126,.15)}
+/* ── Note pills ── */
+.np-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:44px}
+.np{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;font-size:12px;font-weight:600;background:var(--s2);color:var(--mu);border:1px solid var(--b1);transition:all .18s;flex-shrink:0}
+.np.cur{background:var(--grb);color:var(--gr);border-color:var(--gr2);transform:scale(1.18);box-shadow:0 0 0 3px rgba(28,201,126,.12)}
 .np.rec{background:var(--blb);color:var(--bl);border-color:var(--bl2);animation:pop .2s ease}
 
 @keyframes pop{0%{transform:scale(.6);opacity:0}65%{transform:scale(1.18)}100%{transform:scale(1);opacity:1}}
 
-/* Scale grid */
-.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(66px,1fr));gap:7px}
-.sn{padding:9px 4px 7px;text-align:center;border-radius:10px;border:1px solid var(--b1);font-size:13px;font-weight:600;background:var(--s2);color:var(--hi);transition:all .15s}
-.sn .sr{font-size:9px;font-weight:400;display:block;margin-top:3px;opacity:.65}
+/* ── Pattern detection ── */
+.pat-box{padding:12px 15px;background:var(--s2);border:1px solid rgba(34,204,196,.25);border-radius:11px;margin-bottom:9px;display:none}
+.pat-box.show{display:block;animation:fadein .4s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.pat-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.pat-icon{width:22px;height:22px;border-radius:50%;background:var(--teb);border:1px solid rgba(34,204,196,.4);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.pat-title{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--te)}
+.pat-count{font-size:10px;color:var(--mu);margin-left:auto}
+.pat-seq{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.pat-n{padding:5px 12px;border-radius:16px;font-size:13px;font-weight:600;background:var(--teb);color:var(--te);border:1px solid rgba(34,204,196,.3)}
+.pat-arr{color:var(--hi);font-size:13px}
+.pat-next{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap}
+.pat-next-lbl{font-size:10px;color:var(--mu)}
+.pat-next-note{padding:4px 10px;border-radius:14px;font-size:12px;font-weight:600;background:var(--amb);color:var(--am);border:1px solid rgba(232,160,48,.3)}
+
+/* ── Scale grid ── */
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
+.sn{padding:8px 4px 6px;text-align:center;border-radius:9px;border:1px solid var(--b1);font-size:13px;font-weight:600;background:var(--s2);color:var(--hi);transition:all .15s;cursor:default}
+.sn .sr{font-size:9px;font-weight:400;display:block;margin-top:2px;opacity:.6}
 .sn.played{background:var(--blb);color:var(--bl);border-color:var(--bl2)}
 .sn.tonic{background:var(--grb);color:var(--gr);border-color:var(--gr2)}
-.sn.dom{background:var(--amb);color:var(--am);border-color:rgba(232,162,48,.3)}
+.sn.dom{background:var(--amb);color:var(--am);border-color:var(--am2)}
 .sn.sub{background:var(--s3);color:var(--tx);border-color:var(--b2)}
 
-/* Seq */
-.seq-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-height:34px}
-.sq{padding:4px 11px;border-radius:18px;font-size:12px;font-weight:600;background:var(--s2);color:var(--mu);border:1px solid var(--b1)}
+/* ── Seq row ── */
+.seq-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-height:32px}
+.sq{padding:4px 10px;border-radius:16px;font-size:12px;font-weight:600;background:var(--s2);color:var(--mu);border:1px solid var(--b1)}
 .sq.cur{background:var(--grb);color:var(--gr);border-color:var(--gr2)}
-.sq.pred{background:var(--amb);color:var(--am);border-color:rgba(232,162,48,.3);opacity:.85}
-.sq.arr{background:none;border:none;color:var(--hi);font-size:14px;padding:0 2px}
+.sq.pred{background:var(--amb);color:var(--am);border-color:rgba(232,160,48,.3)}
+.sq.arr{background:none;border:none;color:var(--hi);font-size:13px;padding:0 2px}
 
-/* Status */
-#status{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px;color:var(--mu)}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--hi);flex-shrink:0}
+/* ── Misc ── */
+.row-hdr{display:flex;align-items:center;margin-bottom:8px}
+.row-hdr .lbl{margin-bottom:0;flex:1}
+.clr-btn{background:none;border:none;color:var(--hi);font-size:10px;cursor:pointer;padding:3px 7px;border-radius:5px;display:flex;align-items:center;gap:3px;transition:all .15s}
+.clr-btn:hover{color:var(--re);background:var(--reb)}
+#status{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11px;color:var(--mu)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--hi);flex-shrink:0}
 .dot.on{background:var(--gr);animation:blink 1.2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.empty{font-size:11px;color:var(--hi);font-style:italic}
 
-/* Misc */
-.row-hdr{display:flex;align-items:center;margin-bottom:9px}
-.row-hdr .lbl{margin-bottom:0;flex:1}
-.clr-btn{background:none;border:none;color:var(--hi);font-size:11px;cursor:pointer;padding:3px 8px;border-radius:6px;display:flex;align-items:center;gap:4px;transition:all .15s}
-.clr-btn:hover{color:var(--re);background:var(--reb)}
-.empty{font-size:12px;color:var(--hi);font-style:italic}
+/* ── Chord quality badge ── */
+.chord-maj{color:var(--bl)}
+.chord-min{color:var(--pu)}
+.chord-dom{color:var(--am)}
+.chord-dim{color:var(--re)}
 </style>
 </head>
 <body>
@@ -119,23 +123,22 @@ body{background:var(--bg);color:var(--tx);font-family:var(--font);min-height:100
 
 <div class="hdr">
   <div>
-    <h1>Detector de Tom, Escala e Acordes</h1>
-    <p>Análise harmônica em tempo real — notas individuais e acordes</p>
+    <h1>Detector Musical</h1>
+    <p>Tom · Escala · Acordes · Padrões em tempo real</p>
   </div>
   <button id="btn-mic">
-    <svg id="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="9" y="2" width="6" height="12" rx="3"/>
-      <path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="9" y1="22" x2="15" y2="22"/>
+    <svg class="mic-svg" id="mic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="9" y1="22" x2="15" y2="22"/>
     </svg>
     <span id="btn-txt">Ativar microfone</span>
   </button>
 </div>
 
-<!-- Row 1: note + key -->
+<!-- Note + Key -->
 <div class="g2">
   <div class="card">
     <div class="lbl">Nota instantânea</div>
-    <div id="big-note">—</div>
+    <div id="big-note" style="color:var(--hi)">—</div>
     <div id="note-sub">aguardando...</div>
   </div>
   <div class="card">
@@ -158,37 +161,48 @@ body{background:var(--bg);color:var(--tx);font-family:var(--font);min-height:100
 <div class="g2">
   <div class="card">
     <div class="lbl">Acorde detectado</div>
-    <div id="chord-big">—</div>
+    <div id="chord-big" style="color:var(--hi)">—</div>
     <div id="chord-notes"></div>
     <div id="chord-quality"></div>
   </div>
   <div class="card">
     <div class="row-hdr">
-      <div class="lbl">Histórico de acordes</div>
+      <div class="lbl">Sequência de acordes</div>
       <button class="clr-btn" id="clr-ch">✕ limpar</button>
     </div>
     <div class="ch-row" id="ch-row"><span class="empty">Toque acordes...</span></div>
   </div>
 </div>
 
+<!-- Pattern detection -->
+<div class="pat-box" id="pat-box">
+  <div class="pat-header">
+    <div class="pat-icon">↺</div>
+    <div class="pat-title">Padrão detectado</div>
+    <div class="pat-count" id="pat-count"></div>
+  </div>
+  <div class="pat-seq" id="pat-seq"></div>
+  <div class="pat-next" id="pat-next"></div>
+</div>
+
 <!-- Notes played -->
 <div class="card">
   <div class="row-hdr">
-    <div class="lbl">Notas tocadas</div>
+    <div class="lbl">Notas únicas tocadas</div>
     <button class="clr-btn" id="clr-np">✕ limpar</button>
   </div>
   <div class="np-row" id="np-row"><span class="empty">Toque as primeiras notas...</span></div>
 </div>
 
-<!-- Sequence + prediction -->
+<!-- Sequence -->
 <div class="card">
-  <div class="row-hdr"><div class="lbl">Sequência → próximas prováveis</div></div>
+  <div class="row-hdr"><div class="lbl">Sequência recente → próximas prováveis</div></div>
   <div class="seq-row" id="seq-row"><span class="empty">Sequência aqui...</span></div>
 </div>
 
-<!-- Scale grid -->
+<!-- Scale -->
 <div class="card">
-  <div class="lbl">Notas da escala — o que tocar</div>
+  <div class="lbl">Notas da escala — o que tocar a seguir</div>
   <div class="sg" id="sg"><span class="empty" style="grid-column:1/-1">Identifique o tom primeiro...</span></div>
 </div>
 
@@ -196,232 +210,246 @@ body{background:var(--bg);color:var(--tx);font-family:var(--font);min-height:100
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════
-   MUSIC THEORY DATA
-═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   MUSIC THEORY
+═══════════════════════════════════════════ */
 const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const PT = {C:'Dó','C#':'Dó#',D:'Ré','D#':'Ré#',E:'Mi',F:'Fá','F#':'Fá#',G:'Sol','G#':'Sol#',A:'Lá','A#':'Lá#',B:'Si'};
-const ENHARMONIC = {'C#':'Db','D#':'Eb','F#':'Gb','G#':'Ab','A#':'Bb'};
 
-// Scale definitions with weighted scoring
 const SCALES = {
-  major:      {iv:[0,2,4,5,7,9,11], name:'Maior',       rel:'menor'},
-  minor:      {iv:[0,2,3,5,7,8,10], name:'Menor',        rel:'maior'},
-  dorian:     {iv:[0,2,3,5,7,9,10], name:'Dórica',       rel:''},
-  mixolydian: {iv:[0,2,4,5,7,9,10], name:'Mixolídia',    rel:''},
-  phrygian:   {iv:[0,1,3,5,7,8,10], name:'Frígia',       rel:''},
-  lydian:     {iv:[0,2,4,6,7,9,11], name:'Lídia',        rel:''},
+  major:     {iv:[0,2,4,5,7,9,11], name:'Maior'},
+  minor:     {iv:[0,2,3,5,7,8,10], name:'Menor'},
+  dorian:    {iv:[0,2,3,5,7,9,10], name:'Dórica'},
+  mixolydian:{iv:[0,2,4,5,7,9,10], name:'Mixolídia'},
+  phrygian:  {iv:[0,1,3,5,7,8,10], name:'Frígia'},
 };
 
-// Chord templates [intervals from root] → label
-const CHORD_TEMPLATES = [
-  { iv:[0,4,7],      name:'',    quality:'Maior'                },
-  { iv:[0,3,7],      name:'m',   quality:'Menor'                },
-  { iv:[0,4,7,10],   name:'7',   quality:'Dominante 7ª'         },
-  { iv:[0,3,7,10],   name:'m7',  quality:'Menor 7ª'             },
-  { iv:[0,4,7,11],   name:'M7',  quality:'Maior 7ª'             },
-  { iv:[0,3,7,11],   name:'mM7', quality:'Menor c/ maior 7ª'    },
-  { iv:[0,3,6],      name:'dim', quality:'Diminuto'             },
-  { iv:[0,3,6,9],    name:'dim7',quality:'Diminuto 7ª'          },
-  { iv:[0,4,8],      name:'aug', quality:'Aumentado'            },
-  { iv:[0,2,7],      name:'sus2',quality:'Sus2'                 },
-  { iv:[0,5,7],      name:'sus4',quality:'Sus4'                 },
-  { iv:[0,4,7,9],    name:'6',   quality:'Maior 6ª'             },
-  { iv:[0,3,7,9],    name:'m6',  quality:'Menor 6ª'             },
-  { iv:[0,4,7,10,14],name:'9',   quality:'Dominante 9ª'         },
+// Full chord dictionary — note: minor chords listed with 'm'
+const CHORD_TMPL = [
+  {iv:[0,4,7],      sym:'',    label:'Maior',          cat:'maj'},
+  {iv:[0,3,7],      sym:'m',   label:'Menor',          cat:'min'},
+  {iv:[0,4,7,10],   sym:'7',   label:'Dom. 7ª',        cat:'dom'},
+  {iv:[0,3,7,10],   sym:'m7',  label:'Menor 7ª',       cat:'min'},
+  {iv:[0,4,7,11],   sym:'maj7',label:'Maior 7ª',       cat:'maj'},
+  {iv:[0,3,7,11],   sym:'mMaj7',label:'Menor/Maior 7ª',cat:'min'},
+  {iv:[0,3,6],      sym:'dim', label:'Diminuto',       cat:'dim'},
+  {iv:[0,3,6,9],    sym:'°7',  label:'Dim. 7ª',        cat:'dim'},
+  {iv:[0,4,8],      sym:'aug', label:'Aumentado',      cat:'maj'},
+  {iv:[0,2,7],      sym:'sus2',label:'Sus2',           cat:'maj'},
+  {iv:[0,5,7],      sym:'sus4',label:'Sus4',           cat:'maj'},
+  {iv:[0,4,7,9],    sym:'6',   label:'6ª Maior',       cat:'maj'},
+  {iv:[0,3,7,9],    sym:'m6',  label:'6ª Menor',       cat:'min'},
+  {iv:[0,4,7,10,14],sym:'9',   label:'Dom. 9ª',        cat:'dom'},
+  {iv:[0,3,7,10,14],sym:'m9',  label:'Menor 9ª',       cat:'min'},
 ];
 
 const DEGREE = ['I','♭II','II','♭III','III','IV','♯IV','V','♭VI','VI','♭VII','VII'];
 
-function noteIdx(n) { return NOTES.indexOf(n); }
-function buildScale(root, type) {
-  const ri = noteIdx(root);
-  return SCALES[type].iv.map(i => NOTES[(ri+i)%12]);
-}
-function relativeKey(root, type) {
-  if (type === 'major') {
-    const ri = (noteIdx(root)+9)%12;
-    return NOTES[ri] + ' menor';
-  }
-  if (type === 'minor') {
-    const ri = (noteIdx(root)+3)%12;
-    return NOTES[ri] + ' maior';
-  }
+function ni(n){return NOTES.indexOf(n)}
+function buildScale(root,type){const ri=ni(root);return SCALES[type].iv.map(i=>NOTES[(ri+i)%12])}
+
+/* ── Relative key ── */
+function relKey(root, type) {
+  if (type==='major') return NOTES[(ni(root)+9)%12]+' menor';
+  if (type==='minor') return NOTES[(ni(root)+3)%12]+' maior';
   return '';
 }
 
-/* ═══════════════════════════════════════════════════════════
-   KEY IDENTIFICATION — improved weighting
-═══════════════════════════════════════════════════════════ */
+/* ── Key identification (weighted) ── */
 function identifyKey(played) {
   if (played.length < 2) return null;
-  let best = null, bestScore = -1;
+  let best=null, bestScore=-1;
   for (const root of NOTES) {
-    for (const [type, def] of Object.entries(SCALES)) {
-      const sc = buildScale(root, type);
-      let hits = 0, total = played.length;
+    for (const [type,def] of Object.entries(SCALES)) {
+      const sc = buildScale(root,type);
+      let hits=0;
       for (const n of played) {
-        if (sc.includes(n)) {
-          // Weight by scale position: tonic/dominant/subdominant hit harder
-          const semi = (noteIdx(n) - noteIdx(root) + 12) % 12;
-          if (semi === 0)  hits += 1.5;       // tonic
-          else if (semi === 7) hits += 1.3;   // dominant
-          else if (semi === 5) hits += 1.1;   // subdominant
-          else hits += 1.0;
-        }
+        if (!sc.includes(n)) continue;
+        const s=(ni(n)-ni(root)+12)%12;
+        // tonic=1.6, dominant=1.4, subdominant=1.2, rest=1.0
+        hits += s===0?1.6:s===7?1.4:s===5?1.2:1.0;
       }
-      // Penalize scales not well represented
-      const coverage = hits / (total * 1.5);
-      // Mild bonus if root has been played
-      let score = coverage;
-      if (played.includes(root)) score += 0.12;
-      // Mild bonus for common scale types (avoids exotic false positives)
-      if (type === 'major' || type === 'minor') score += 0.04;
-
-      if (score > bestScore) { bestScore = score; best = {root, type, score, scale: sc}; }
+      let score = hits / (played.length * 1.6);
+      if (played.includes(root)) score += 0.1;
+      if (type==='major'||type==='minor') score += 0.03;
+      if (score>bestScore){bestScore=score;best={root,type,score,scale:sc}}
     }
   }
-  // Only return if at least 60% of played notes fit
-  const raw = best.scale.filter(n => played.includes(n)).length / played.length;
-  if (raw < 0.5) return null;
-  return best;
+  // Require at least 55% raw coverage
+  if (!best) return null;
+  const raw = best.scale.filter(n=>played.includes(n)).length/played.length;
+  return raw>=0.55?best:null;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   CHORD DETECTION via pitch-class profile
-═══════════════════════════════════════════════════════════ */
-function detectChord(pcProfile) {
-  // pcProfile: Float32Array[12] of normalized energy per pitch class
-  const THRESH = 0.15;
-  const active = NOTES.map((n, i) => ({n, e: pcProfile[i]}))
-                      .filter(x => x.e > THRESH)
-                      .sort((a,b) => b.e - a.e);
-  if (active.length < 2) return null;
+/* ── Chord detection from pitch-class profile ── */
+function detectChord(pcp) {
+  // pcp: Float32Array[12] normalized 0-1
+  const THRESH = 0.18;
+  const activeSet = new Set();
+  for (let i=0;i<12;i++) if(pcp[i]>THRESH) activeSet.add(NOTES[i]);
+  if (activeSet.size < 2) return null;
 
-  const activeSet = new Set(active.map(x => x.n));
-  let bestMatch = null, bestScore = 0;
-
+  let best=null, bestScore=0;
   for (const root of NOTES) {
-    const ri = noteIdx(root);
-    for (const tmpl of CHORD_TEMPLATES) {
-      const chordNotes = tmpl.iv.map(i => NOTES[(ri+i)%12]);
-      // Score = how many chord tones are active, penalized by false positives
-      let hits = 0, fp = 0;
-      for (const cn of chordNotes) { if (activeSet.has(cn)) hits++; else fp += 0.3; }
-      if (hits < 2) continue;
-      // Require root or 5th to be present
-      const hasRoot  = activeSet.has(root);
+    const ri = ni(root);
+    for (const tmpl of CHORD_TMPL) {
+      const chNotes = tmpl.iv.map(i=>NOTES[(ri+i)%12]);
+      // Count how many chord tones are active
+      let hits=0;
+      for (const cn of chNotes) if(activeSet.has(cn)) hits++;
+      if (hits<2) continue;
+      // Penalize extra active notes not in chord
+      let fp=0;
+      for (const an of activeSet) if(!chNotes.includes(an)) fp+=0.25;
+      const hasRoot = activeSet.has(root);
       const hasFifth = activeSet.has(NOTES[(ri+7)%12]);
+      // Must have root OR fifth to be a real chord
       if (!hasRoot && !hasFifth) continue;
-
-      const score = (hits / chordNotes.length) - fp + (hasRoot ? 0.2 : 0);
-      if (score > bestScore) {
-        bestScore = score;
-        bestMatch = {
-          name: root + tmpl.name,
-          root,
-          quality: tmpl.quality,
-          notes: chordNotes,
-          score
-        };
+      // Root presence weighted more for identification
+      let score = (hits/chNotes.length) - fp;
+      if (hasRoot) score += 0.25;
+      if (hasFifth) score += 0.1;
+      if (score>bestScore){
+        bestScore=score;
+        best={name:root+tmpl.sym, root, sym:tmpl.sym, label:tmpl.label, cat:tmpl.cat,
+              notes:chNotes, score};
       }
     }
   }
-  return bestScore > 0.4 ? bestMatch : null;
+  return bestScore>0.45?best:null;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PITCH DETECTION — improved autocorrelation
-═══════════════════════════════════════════════════════════ */
-function freqToNote(f) {
-  const n = 12 * Math.log2(f/440) + 69;
-  const midi = Math.round(n);
-  return { name: NOTES[((midi%12)+12)%12], midi, cents:(n-midi)*100, octave:Math.floor(midi/12)-1 };
-}
-
-function autoCorrelate(buf, sr) {
-  const SIZE = buf.length;
-  let rms = 0;
-  for (let i=0;i<SIZE;i++) rms += buf[i]*buf[i];
-  rms = Math.sqrt(rms/SIZE);
-  if (rms < 0.008) return -1;
-
-  let r1=0, r2=SIZE-1;
-  for (let i=0;i<SIZE/2;i++) { if(Math.abs(buf[i])<0.2){r1=i;break} }
-  for (let i=1;i<SIZE/2;i++) { if(Math.abs(buf[SIZE-i])<0.2){r2=SIZE-i;break} }
-  const b = buf.slice(r1,r2);
-  const c = new Float32Array(b.length);
-  for (let i=0;i<b.length;i++) for (let j=0;j<b.length-i;j++) c[i]+=b[j]*b[j+i];
-  let d=0; while(c[d]>c[d+1]) d++;
-  let mv=-1, mp=-1;
-  for (let i=d;i<b.length;i++) { if(c[i]>mv){mv=c[i];mp=i} }
-  if (mp<1) return -1;
-  let T0=mp;
-  const x1=c[T0-1],x2=c[T0],x3=c[T0+1];
-  const a=(x1+x3-2*x2)/2;
-  if(a) T0-=(x3-x1)/(4*a);
-  return sr/T0;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   PITCH CLASS PROFILE from FFT
-═══════════════════════════════════════════════════════════ */
-function getPitchClassProfile(freqData, sr, fftSize) {
-  const pc = new Float32Array(12).fill(0);
-  const binHz = sr / fftSize;
-  for (let i=1; i<freqData.length; i++) {
-    const f = i * binHz;
-    if (f < 60 || f > 2000) continue;
-    const n = 12 * Math.log2(f/440) + 69;
-    const pci = ((Math.round(n)%12)+12)%12;
-    const lin = Math.pow(10, freqData[i]/20);
-    pc[pci] += lin;
+/* ── Pitch class profile from FFT ── */
+function getPCP(freqData, sr, fftSize) {
+  const pc=new Float32Array(12).fill(0);
+  const binHz=sr/fftSize;
+  for (let i=2;i<freqData.length;i++){
+    const f=i*binHz;
+    if(f<55||f>2100)continue;
+    const lin=Math.pow(10,freqData[i]/20);
+    const n=12*Math.log2(f/440)+69;
+    const pci=((Math.round(n)%12)+12)%12;
+    pc[pci]+=lin;
   }
-  // Normalize
-  const mx = Math.max(...pc);
-  if (mx > 0) for (let i=0;i<12;i++) pc[i] /= mx;
+  const mx=Math.max(...pc,0.0001);
+  for(let i=0;i<12;i++) pc[i]/=mx;
   return pc;
 }
 
-/* ═══════════════════════════════════════════════════════════
+/* ── Autocorrelation pitch ── */
+function freqToNote(f){
+  const n=12*Math.log2(f/440)+69;
+  const midi=Math.round(n);
+  return{name:NOTES[((midi%12)+12)%12],midi,cents:(n-midi)*100,octave:Math.floor(midi/12)-1};
+}
+function autoCorrelate(buf,sr){
+  const N=buf.length;
+  let rms=0;for(let i=0;i<N;i++)rms+=buf[i]*buf[i];
+  rms=Math.sqrt(rms/N);if(rms<0.008)return-1;
+  let r1=0,r2=N-1;
+  for(let i=0;i<N/2;i++){if(Math.abs(buf[i])<0.2){r1=i;break}}
+  for(let i=1;i<N/2;i++){if(Math.abs(buf[N-i])<0.2){r2=N-i;break}}
+  const b=buf.slice(r1,r2);
+  const c=new Float32Array(b.length);
+  for(let i=0;i<b.length;i++)for(let j=0;j<b.length-i;j++)c[i]+=b[j]*b[j+i];
+  let d=0;while(c[d]>c[d+1])d++;
+  let mv=-1,mp=-1;
+  for(let i=d;i<b.length;i++){if(c[i]>mv){mv=c[i];mp=i}}
+  if(mp<1)return-1;
+  let T=mp;
+  const x1=c[T-1],x2=c[T],x3=c[T+1],a=(x1+x3-2*x2)/2;
+  if(a)T-=(x3-x1)/(4*a);
+  return sr/T;
+}
+
+/* ════════════════════════════════════════════
+   PATTERN DETECTION
+   Finds repeating subsequences of chords/notes
+════════════════════════════════════════════ */
+function findPatterns(seq) {
+  // Look for repeating sub-sequences of length 2-8
+  if (seq.length < 4) return null;
+  let best = null;
+  for (let len=2; len<=Math.min(8,Math.floor(seq.length/2)); len++) {
+    // Slide over sequence looking for repeats
+    const counts = {};
+    for (let i=0; i<=seq.length-len; i++) {
+      const sub = seq.slice(i,i+len).join(',');
+      counts[sub]=(counts[sub]||0)+1;
+    }
+    // Find most repeated sub of this length
+    for (const [sub,cnt] of Object.entries(counts)) {
+      if (cnt >= 2) {
+        const score = cnt * len; // longer patterns with more repeats score higher
+        if (!best || score > best.score) {
+          best = { pattern: sub.split(','), count: cnt, len, score };
+        }
+      }
+    }
+  }
+  return best;
+}
+
+/* ── predict next note/chord given pattern ── */
+function predictFromPattern(seq, pattern) {
+  // Find where we are in the pattern
+  const last = seq.slice(-pattern.length);
+  for (let offset=0; offset<pattern.length; offset++) {
+    const window = [...pattern.slice(offset), ...pattern.slice(0,offset)];
+    if (last.every((n,i) => n===window[i])) {
+      return window[(pattern.length) % pattern.length] || pattern[0];
+    }
+  }
+  // Try partial match at end of pattern
+  for (let partLen=pattern.length-1; partLen>=1; partLen--) {
+    const tail = seq.slice(-partLen);
+    for (let s=0; s<pattern.length; s++) {
+      const slice = pattern.slice(s, s+partLen);
+      if (slice.length===partLen && tail.every((n,i)=>n===slice[i])) {
+        return pattern[(s+partLen)%pattern.length];
+      }
+    }
+  }
+  return pattern[0];
+}
+
+/* ═══════════════════════════════════════════
    STATE
-═══════════════════════════════════════════════════════════ */
-let audioCtx=null, analyser=null, stream=null;
-let isOn=false, rafId=null;
-let noteHist=[], uniqNotes=[];
-let chordHist=[], lastChord=null;
-let lastNote=null, lastNoteTime=0;
-let currentKey=null;
-let lastChordTime=0;
+═══════════════════════════════════════════ */
+let audioCtx=null,analyser=null,stream=null,rafId=null,isOn=false;
+let noteHist=[],uniqNotes=[],lastNote=null,lastNoteTime=0;
+let chordHist=[],lastChord=null,lastChordTime=0,lastChordObj=null;
+let currentKey=null,currentPattern=null;
 
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    DOM
-═══════════════════════════════════════════════════════════ */
-const $ = id => document.getElementById(id);
-const btnMic=$('btn-mic'), btnTxt=$('btn-txt');
-const bigNote=$('big-note'), noteSub=$('note-sub');
-const keyMain=$('key-main'), keyRel=$('key-rel'), keyScale=$('key-scale');
-const cbar=$('cbar'), cpct=$('cpct');
-const chordBig=$('chord-big'), chordNotes=$('chord-notes'), chordQuality=$('chord-quality');
-const chRow=$('ch-row'), npRow=$('np-row'), seqRow=$('seq-row'), sg=$('sg');
-const sdot=$('sdot'), stxt=$('stxt');
-const canvas=$('tuner-canvas'), c2=canvas.getContext('2d');
+═══════════════════════════════════════════ */
+const $=id=>document.getElementById(id);
+const btnMic=$('btn-mic'),btnTxt=$('btn-txt');
+const bigNote=$('big-note'),noteSub=$('note-sub');
+const keyMain=$('key-main'),keyRel=$('key-rel'),keyScale=$('key-scale');
+const cbar=$('cbar'),cpct=$('cpct');
+const chordBig=$('chord-big'),chordNotes=$('chord-notes'),chordQuality=$('chord-quality');
+const chRow=$('ch-row'),npRow=$('np-row'),seqRow=$('seq-row'),sgEl=$('sg');
+const patBox=$('pat-box'),patSeq=$('pat-seq'),patNext=$('pat-next'),patCount=$('pat-count');
+const sdot=$('sdot'),stxt=$('stxt');
+const canvas=$('tuner-canvas'),ctx2=canvas.getContext('2d');
 
-btnMic.addEventListener('click', toggle);
-$('clr-ch').addEventListener('click', ()=>{ chordHist=[]; lastChord=null; renderChordHist(); });
-$('clr-np').addEventListener('click', ()=>{ noteHist=[]; uniqNotes=[]; lastNote=null; currentKey=null; renderNotes(null); renderSeq(); renderScale(null); keyMain.textContent='—'; keyRel.textContent=''; keyScale.textContent=''; cbar.style.width='0%'; cpct.textContent=''; });
+btnMic.addEventListener('click',toggle);
+$('clr-ch').addEventListener('click',()=>{chordHist=[];lastChord=null;currentPattern=null;renderChordHist();patBox.classList.remove('show')});
+$('clr-np').addEventListener('click',()=>{noteHist=[];uniqNotes=[];lastNote=null;currentKey=null;renderNotes(null);renderSeq();renderScale(null);keyMain.textContent='—';keyRel.textContent='';keyScale.textContent='';cbar.style.width='0%';cpct.textContent=''});
 
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    MIC
-═══════════════════════════════════════════════════════════ */
-async function toggle() {
-  if (isOn) { stopMic(); return; }
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});
-    audioCtx = new (window.AudioContext||window.webkitAudioContext)({sampleRate:44100});
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 8192;
-    analyser.smoothingTimeConstant = 0.75;
+═══════════════════════════════════════════ */
+async function toggle(){
+  if(isOn){stopMic();return}
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:44100});
+    analyser=audioCtx.createAnalyser();
+    analyser.fftSize=8192;
+    analyser.smoothingTimeConstant=0.72;
     audioCtx.createMediaStreamSource(stream).connect(analyser);
     isOn=true;
     btnMic.classList.add('on');
@@ -429,63 +457,58 @@ async function toggle() {
     sdot.classList.add('on');
     stxt.textContent='Ouvindo — toque seu instrumento';
     loop();
-  } catch(e) { stxt.textContent='Erro: '+(e.message||'permissão negada'); }
+  }catch(e){stxt.textContent='Erro: '+(e.message||'permissão negada')}
 }
-function stopMic() {
-  if(rafId) cancelAnimationFrame(rafId);
-  if(stream) stream.getTracks().forEach(t=>t.stop());
-  if(audioCtx) audioCtx.close();
+function stopMic(){
+  if(rafId)cancelAnimationFrame(rafId);
+  if(stream)stream.getTracks().forEach(t=>t.stop());
+  if(audioCtx)audioCtx.close();
   isOn=false;
   btnMic.classList.remove('on');
   btnTxt.textContent='Ativar microfone';
   sdot.classList.remove('on');
   stxt.textContent='Microfone desativado';
-  bigNote.textContent='—'; noteSub.textContent='aguardando...';
+  bigNote.textContent='—';bigNote.style.color='var(--hi)';
+  noteSub.textContent='aguardando...';
   drawTuner(null);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   MAIN LOOP
-═══════════════════════════════════════════════════════════ */
-function loop() {
-  if (!isOn) return;
+/* ═══════════════════════════════════════════
+   LOOP
+═══════════════════════════════════════════ */
+function loop(){
+  if(!isOn)return;
+  const tbuf=new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(tbuf);
+  const freq=autoCorrelate(tbuf,audioCtx.sampleRate);
 
-  // Time domain → pitch
-  const timeBuf = new Float32Array(analyser.fftSize);
-  analyser.getFloatTimeDomainData(timeBuf);
-  const freq = autoCorrelate(timeBuf, audioCtx.sampleRate);
+  const fbuf=new Float32Array(analyser.frequencyBinCount);
+  analyser.getFloatFrequencyData(fbuf);
+  const pcp=getPCP(fbuf,audioCtx.sampleRate,analyser.fftSize);
 
-  // Freq domain → pitch class profile → chord
-  const freqBuf = new Float32Array(analyser.frequencyBinCount);
-  analyser.getFloatFrequencyData(freqBuf);
-  const pcp = getPitchClassProfile(freqBuf, audioCtx.sampleRate, analyser.fftSize);
+  const now=Date.now();
 
-  const now = Date.now();
-
-  // Note detection
-  if (freq > 55 && freq < 2100) {
-    const note = freqToNote(freq);
-    bigNote.textContent = note.name;
-    bigNote.style.color = 'var(--tx)';
-    noteSub.textContent = `${freq.toFixed(1)} Hz · oitava ${note.octave}`;
-
-    if (note.name !== lastNote && now - lastNoteTime > 120) {
-      lastNote = note.name;
-      lastNoteTime = now;
+  // ── Note ──
+  if(freq>55&&freq<2100){
+    const note=freqToNote(freq);
+    bigNote.textContent=note.name;
+    bigNote.style.color='var(--tx)';
+    noteSub.textContent=`${freq.toFixed(1)} Hz · oitava ${note.octave}`;
+    if(note.name!==lastNote&&now-lastNoteTime>115){
+      lastNote=note.name;lastNoteTime=now;
       noteHist.push(note.name);
-      if (noteHist.length > 64) noteHist.shift();
-      if (!uniqNotes.includes(note.name)) uniqNotes.push(note.name);
-      const key = identifyKey(uniqNotes);
-      if (key) {
-        currentKey = key;
-        const tn = SCALES[key.type].name;
-        keyMain.textContent = `${PT[key.root]||key.root} ${tn}`;
-        const rel = relativeKey(key.root, key.type);
-        keyRel.textContent = rel ? `Relativa: ${rel}` : '';
-        keyScale.textContent = `Notas: ${key.scale.map(n=>PT[n]||n).join(' – ')}`;
-        const pct = Math.min(99, Math.round(key.score * 85));
-        cbar.style.width = pct+'%';
-        cpct.textContent = `confiança: ${pct}%`;
+      if(noteHist.length>80)noteHist.shift();
+      if(!uniqNotes.includes(note.name))uniqNotes.push(note.name);
+      const key=identifyKey(uniqNotes);
+      if(key){
+        currentKey=key;
+        keyMain.textContent=`${PT[key.root]||key.root} ${SCALES[key.type].name}`;
+        const rel=relKey(key.root,key.type);
+        keyRel.textContent=rel?`Relativa: ${rel}`:'';
+        keyScale.textContent=`Notas: ${key.scale.map(n=>PT[n]||n).join(' – ')}`;
+        const pct=Math.min(99,Math.round(key.score*85));
+        cbar.style.width=pct+'%';
+        cpct.textContent=`confiança: ${pct}%`;
         renderScale(key);
       }
       renderNotes(note.name);
@@ -493,146 +516,153 @@ function loop() {
     }
     drawTuner(note);
   } else {
-    bigNote.style.color = 'var(--hi)';
+    bigNote.style.color='var(--hi)';
     drawTuner(null);
   }
 
-  // Chord detection (slightly slower refresh to reduce flicker)
-  if (now - lastChordTime > 180) {
-    lastChordTime = now;
-    const chord = detectChord(pcp);
-    if (chord) {
-      chordBig.textContent = chord.name;
-      chordBig.style.color = 'var(--pu)';
-      chordNotes.textContent = chord.notes.map(n=>PT[n]||n).join(' – ');
-      chordQuality.textContent = chord.quality;
-      if (chord.name !== lastChord) {
-        lastChord = chord.name;
+  // ── Chord ──
+  if(now-lastChordTime>160){
+    lastChordTime=now;
+    const chord=detectChord(pcp);
+    if(chord&&chord.score>0.5){
+      chordBig.textContent=chord.name;
+      const catColor={maj:'var(--bl)',min:'var(--pu)',dom:'var(--am)',dim:'var(--re)'};
+      chordBig.style.color=catColor[chord.cat]||'var(--pu)';
+      chordNotes.textContent=chord.notes.map(n=>PT[n]||n).join(' – ');
+      chordQuality.textContent=chord.label;
+      if(chord.name!==lastChord){
+        lastChord=chord.name;lastChordObj=chord;
         chordHist.push(chord.name);
-        if (chordHist.length > 20) chordHist.shift();
+        if(chordHist.length>24)chordHist.shift();
         renderChordHist();
-      }
-    } else {
-      if (!chord && now - lastChordTime > 800) {
-        chordBig.style.color = 'var(--hi)';
+        // Check patterns every 4 new chords
+        if(chordHist.length>=4) detectAndShowPattern();
       }
     }
   }
 
-  rafId = requestAnimationFrame(loop);
+  rafId=requestAnimationFrame(loop);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   RENDER
-═══════════════════════════════════════════════════════════ */
-function renderChordHist() {
-  if (chordHist.length === 0) { chRow.innerHTML='<span class="empty">Toque acordes...</span>'; return; }
-  chRow.innerHTML = chordHist.map((c,i) => {
-    const cur = i === chordHist.length-1;
-    const rec = i >= chordHist.length-3 && !cur;
-    return `<div class="ch-pill ${cur?'cur':rec?'rec':''}">${c}</div>`;
-  }).join('');
-}
-
-function renderNotes(active) {
-  if (uniqNotes.length===0) { npRow.innerHTML='<span class="empty">Toque as primeiras notas...</span>'; return; }
-  const rec3 = noteHist.slice(-3);
-  npRow.innerHTML = uniqNotes.map(n => {
-    const cls = n===active ? 'cur' : rec3.includes(n) ? 'rec' : '';
-    return `<div class="np ${cls}">${n}</div>`;
-  }).join('');
-}
-
-function renderSeq() {
-  if (noteHist.length===0) { seqRow.innerHTML='<span class="empty">Sequência aqui...</span>'; return; }
-  const last6 = noteHist.slice(-6);
-  // Bigram prediction
-  const lastN = last6[last6.length-1];
-  const bg = {};
-  for (let i=0;i<noteHist.length-1;i++) {
-    if (noteHist[i]===lastN) {
-      const nx=noteHist[i+1];
-      bg[nx]=(bg[nx]||0)+1;
-    }
-  }
-  const preds = Object.entries(bg).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
-  // Also filter by scale
-  const scPreds = preds.filter(n => !currentKey || currentKey.scale.includes(n));
-  const show = scPreds.length>0 ? scPreds : preds.slice(0,2);
-
-  let html = last6.map((n,i) => {
-    const cur = i===last6.length-1;
-    const parts = i>0 ? '<span class="sq arr">›</span>' : '';
-    return parts + `<span class="sq ${cur?'cur':''}">${n}</span>`;
-  }).join('');
-  if (show.length>0) {
-    html += '<span class="sq arr">→</span>';
-    html += show.map(n=>`<span class="sq pred">${n}</span>`).join('<span class="sq arr" style="font-size:10px;opacity:.4">·</span>');
-    html += `<span style="font-size:10px;color:var(--hi);margin-left:4px">provável</span>`;
-  }
-  seqRow.innerHTML = html;
-}
-
-function renderScale(key) {
-  if (!key) { sg.innerHTML='<span class="empty" style="grid-column:1/-1">Identifique o tom primeiro...</span>'; return; }
-  const ri = noteIdx(key.root);
-  sg.innerHTML = key.scale.map(n => {
-    const semi = (noteIdx(n)-ri+12)%12;
-    const deg = DEGREE[semi];
-    const played = uniqNotes.includes(n);
-    const isI = semi===0, isV = semi===7, isIV = semi===5;
-    let cls = '';
-    if (isI) cls='tonic';
-    else if (isV) cls='dom';
-    else if (isIV) cls='sub';
-    else if (played) cls='played';
-    return `<div class="sn ${cls}">${n}<span class="sr">${deg}${played?' ✓':''}</span></div>`;
-  }).join('');
-}
-
-/* ═══════════════════════════════════════════════════════════
-   TUNER CANVAS
-═══════════════════════════════════════════════════════════ */
-function drawTuner(note) {
-  const w = canvas.offsetWidth || 700;
-  canvas.width=w; canvas.height=56;
-  c2.fillStyle='#1e1e21'; c2.fillRect(0,0,w,56);
-  const cx=w/2;
-  for (let cv=-50;cv<=50;cv+=10) {
-    const x=cx+(cv/50)*(w/2-24);
-    const big=cv===0||Math.abs(cv)===50;
-    c2.strokeStyle=big?'#4a4845':'#2a2a2c';
-    c2.lineWidth=big?1:.5;
-    const th=big?14:7;
-    c2.beginPath(); c2.moveTo(x,28-th/2); c2.lineTo(x,28+th/2); c2.stroke();
-  }
-  c2.strokeStyle='#333'; c2.lineWidth=1;
-  c2.beginPath(); c2.moveTo(cx,6); c2.lineTo(cx,50); c2.stroke();
-  if (note) {
-    const cv=Math.max(-50,Math.min(50,note.cents));
-    const x=cx+(cv/50)*(w/2-24);
-    const ok=Math.abs(cv)<10;
-    c2.fillStyle=ok?'#1cc97e':'#e04848';
-    c2.beginPath(); c2.arc(x,28,11,0,Math.PI*2); c2.fill();
-    c2.fillStyle='#888'; c2.font='500 11px '+getComputedStyle(document.body).fontFamily;
-    c2.textAlign='left'; const sg=cv>=0?'+':'';
-    c2.fillText(`${sg}${Math.round(cv)}¢`,7,32);
-    c2.textAlign='right'; c2.fillText(note.name,w-7,32);
-    if(ok){c2.fillStyle='#1cc97e';c2.font='10px sans-serif';c2.textAlign='center';c2.fillText('✓ afinado',cx,50)}
+/* ═══════════════════════════════════════════
+   PATTERN
+═══════════════════════════════════════════ */
+function detectAndShowPattern(){
+  const pat=findPatterns(chordHist);
+  if(!pat||pat.count<2){patBox.classList.remove('show');return}
+  currentPattern=pat;
+  // Build display
+  patCount.textContent=`repetido ${pat.count}×`;
+  patSeq.innerHTML=pat.pattern.map((n,i)=>`
+    ${i>0?'<span class="pat-arr">›</span>':''}
+    <span class="pat-n">${n}</span>
+  `).join('');
+  // Predict next
+  const next=predictFromPattern(chordHist,pat.pattern);
+  if(next){
+    patNext.innerHTML=`
+      <span class="pat-next-lbl">Próximo provável:</span>
+      <span class="pat-next-note">${next}</span>
+    `;
   } else {
-    c2.fillStyle='#333'; c2.font='11px sans-serif'; c2.textAlign='center';
-    c2.fillText('toque uma nota para afinar',cx,32);
+    patNext.innerHTML='';
+  }
+  patBox.classList.add('show');
+}
+
+/* ═══════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════ */
+function renderChordHist(){
+  if(!chordHist.length){chRow.innerHTML='<span class="empty">Toque acordes...</span>';return}
+  chRow.innerHTML=chordHist.map((c,i)=>{
+    const cur=i===chordHist.length-1;
+    const rec=!cur&&i>=chordHist.length-3;
+    return`<div class="ch-pill ${cur?'cur':rec?'rec':''}">${c}</div>`;
+  }).join('');
+}
+
+function renderNotes(active){
+  if(!uniqNotes.length){npRow.innerHTML='<span class="empty">Toque as primeiras notas...</span>';return}
+  const rec3=noteHist.slice(-3);
+  npRow.innerHTML=uniqNotes.map(n=>{
+    const cls=n===active?'cur':rec3.includes(n)?'rec':'';
+    return`<div class="np ${cls}">${n}</div>`;
+  }).join('');
+}
+
+function renderSeq(){
+  if(!noteHist.length){seqRow.innerHTML='<span class="empty">Sequência aqui...</span>';return}
+  const last6=noteHist.slice(-6);
+  const lastN=last6[last6.length-1];
+  // bigram prediction
+  const bg={};
+  for(let i=0;i<noteHist.length-1;i++){
+    if(noteHist[i]===lastN){const nx=noteHist[i+1];bg[nx]=(bg[nx]||0)+1}
+  }
+  let preds=Object.entries(bg).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+  if(currentKey) preds=preds.filter(n=>currentKey.scale.includes(n));
+
+  let html=last6.map((n,i)=>{
+    const cur=i===last6.length-1;
+    return(i>0?'<span class="sq arr">›</span>':'')+`<span class="sq ${cur?'cur':''}">${n}</span>`;
+  }).join('');
+  if(preds.length){
+    html+='<span class="sq arr">→</span>';
+    html+=preds.map(n=>`<span class="sq pred">${n}</span>`).join('<span class="sq arr" style="font-size:9px;opacity:.35">·</span>');
+    html+=`<span style="font-size:10px;color:var(--hi);margin-left:4px">provável</span>`;
+  }
+  seqRow.innerHTML=html;
+}
+
+function renderScale(key){
+  if(!key){sgEl.innerHTML='<span class="empty" style="grid-column:1/-1">Identifique o tom primeiro...</span>';return}
+  const ri=ni(key.root);
+  sgEl.innerHTML=key.scale.map(n=>{
+    const semi=(ni(n)-ri+12)%12;
+    const deg=DEGREE[semi];
+    const played=uniqNotes.includes(n);
+    const isI=semi===0,isV=semi===7,isIV=semi===5;
+    let cls=played?'played':'';
+    if(isI)cls='tonic';else if(isV)cls='dom';else if(isIV)cls='sub';
+    return`<div class="sn ${cls}">${n}<span class="sr">${deg}${played?' ✓':''}</span></div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   TUNER CANVAS
+═══════════════════════════════════════════ */
+function drawTuner(note){
+  const w=canvas.offsetWidth||700;
+  canvas.width=w;canvas.height=54;
+  ctx2.fillStyle='#1e1e21';ctx2.fillRect(0,0,w,54);
+  const cx=w/2;
+  for(let cv=-50;cv<=50;cv+=10){
+    const x=cx+(cv/50)*(w/2-22);
+    const big=cv===0||Math.abs(cv)===50;
+    ctx2.strokeStyle=big?'#4a4845':'#2a2a2d';
+    ctx2.lineWidth=big?1:.5;
+    const th=big?13:6;
+    ctx2.beginPath();ctx2.moveTo(x,27-th/2);ctx2.lineTo(x,27+th/2);ctx2.stroke();
+  }
+  ctx2.strokeStyle='#333';ctx2.lineWidth=.5;
+  ctx2.beginPath();ctx2.moveTo(cx,5);ctx2.lineTo(cx,49);ctx2.stroke();
+  if(note){
+    const cv=Math.max(-50,Math.min(50,note.cents));
+    const x=cx+(cv/50)*(w/2-22);
+    const ok=Math.abs(cv)<10;
+    ctx2.fillStyle=ok?'#1cc97e':'#e04848';
+    ctx2.beginPath();ctx2.arc(x,27,10,0,Math.PI*2);ctx2.fill();
+    ctx2.fillStyle='#888';ctx2.font='10px sans-serif';
+    ctx2.textAlign='left';ctx2.fillText(`${cv>=0?'+':''}${Math.round(cv)}¢`,7,31);
+    ctx2.textAlign='right';ctx2.fillText(note.name,w-7,31);
+    if(ok){ctx2.fillStyle='#1cc97e';ctx2.textAlign='center';ctx2.fillText('✓ afinado',cx,48)}
+  } else {
+    ctx2.fillStyle='#333';ctx2.font='11px sans-serif';ctx2.textAlign='center';
+    ctx2.fillText('toque uma nota para afinar',cx,31);
   }
 }
 drawTuner(null);
-
-/* ═══════════════════════════════════════════════════════════
-   PREDICT next chord
-═══════════════════════════════════════════════════════════ */
-// Updates chord quality description in PT
-function ptQuality(q) {
-  return q || '';
-}
 </script>
 </body>
 </html>
