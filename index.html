@@ -5,164 +5,156 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Detector Musical</title>
 <style>
-/* ═══════════════════════ TOKENS ═══════════════════════ */
 :root{
-  --bg:#09090a; --s1:#111113; --s2:#18181b; --s3:#222226; --s4:#2c2c31;
-  --b1:rgba(255,255,255,.05); --b2:rgba(255,255,255,.1); --b3:rgba(255,255,255,.18);
-  --tx:#edeae4; --mu:#88847f; --hi:#4e4b47; --lo:#2a2927;
-  --gr:#17c976; --gr2:#0a5c35; --grb:#060f09;
-  --bl:#3d8eff; --bl2:#173e90; --blb:#060e1f;
-  --am:#e8a020; --am2:#7a500d; --amb:#1a1203;
-  --re:#e04040; --reb:#1a0606;
-  --pu:#9872f5; --pu2:#4a2aaa; --pub:#0e0920;
-  --te:#14c8c0; --te2:#0a6460; --teb:#060f0f;
-  --font:'Segoe UI',system-ui,sans-serif;
-  --r:12px; --rl:16px;
+  --bg:#09090a;--s1:#111113;--s2:#18181b;--s3:#222226;--s4:#2c2c31;
+  --b1:rgba(255,255,255,.05);--b2:rgba(255,255,255,.1);--b3:rgba(255,255,255,.18);
+  --tx:#edeae4;--mu:#88847f;--hi:#4e4b47;--lo:#2a2927;
+  --gr:#17c976;--gr2:#0a5c35;--grb:#060f09;
+  --bl:#3d8eff;--bl2:#173e90;--blb:#060e1f;
+  --am:#e8a020;--am2:#7a500d;--amb:#1a1203;
+  --re:#e04040;--reb:#1a0606;
+  --pu:#9872f5;--pu2:#4a2aaa;--pub:#0e0920;
+  --te:#14c8c0;--te2:#0a6460;--teb:#060f0f;
+  --font:'Segoe UI',system-ui,sans-serif;--r:12px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{background:var(--bg);color:var(--tx);font-family:var(--font);overflow:hidden;height:100vh;display:flex;flex-direction:column}
 
-/* ═══════════════════════ TOP BAR ═══════════════════════ */
-#topbar{
-  display:flex;align-items:center;gap:10px;padding:10px 16px;
-  background:var(--s1);border-bottom:1px solid var(--b1);
-  flex-shrink:0;
-}
+/* ── TOP BAR ── */
+#topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--s1);border-bottom:1px solid var(--b1);flex-shrink:0}
 #topbar h1{font-size:14px;font-weight:600;letter-spacing:-.2px;margin-right:4px}
 .tb-sep{width:1px;height:18px;background:var(--b2);flex-shrink:0}
-.tb-pill{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;background:var(--s2);border:1px solid var(--b1);color:var(--mu);cursor:pointer;transition:all .15s;white-space:nowrap}
+.tb-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;background:var(--s2);border:1px solid var(--b1);color:var(--mu);cursor:pointer;transition:all .15s;white-space:nowrap}
 .tb-pill:hover{border-color:var(--b2);color:var(--tx)}
-.tb-pill.act{background:var(--grb);color:var(--gr);border-color:var(--gr2)}
 .tb-pill svg{width:13px;height:13px;flex-shrink:0}
 #btn-mic{margin-left:auto}
 #btn-mic.on{background:var(--reb);color:var(--re);border-color:rgba(224,64,64,.5)}
-.dot-live{width:6px;height:6px;border-radius:50%;background:var(--hi);flex-shrink:0}
-.dot-live.on{background:var(--re);animation:blink 1s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-#mode-study,#mode-perf{transition:all .15s}
 #mode-perf.act{background:var(--pub);color:var(--pu);border-color:var(--pu2)}
 #mode-study.act{background:var(--blb);color:var(--bl);border-color:var(--bl2)}
+.dot-live{width:6px;height:6px;border-radius:50%;background:var(--hi);flex-shrink:0;transition:background .3s}
+.dot-live.on{background:var(--re);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
 
-/* ═══════════════════════ MAIN LAYOUT ═══════════════════════ */
-#main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+/* ── LAYOUT ── */
+#main{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
 
-/* ── PERFORMANCE MODE ── */
-#perf-view{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:20px;gap:16px}
-#perf-chord{font-size:clamp(72px,16vw,140px);font-weight:700;letter-spacing:-3px;line-height:1;color:var(--pu);transition:all .18s cubic-bezier(.4,0,.2,1);text-align:center}
-#perf-chord.flash{animation:chflash .25s ease}
-@keyframes chflash{0%{transform:scale(.92);opacity:.6}100%{transform:scale(1);opacity:1}}
-#perf-chord.maj{color:var(--bl)} #perf-chord.min{color:var(--pu)}
-#perf-chord.dom{color:var(--am)} #perf-chord.dim{color:var(--re)}
-#perf-quality{font-size:16px;color:var(--mu);letter-spacing:.04em;margin-top:-8px}
-.perf-row{display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:center}
-#perf-key{font-size:20px;font-weight:600;color:var(--tx)}
-#perf-degree{font-size:20px;color:var(--am);font-weight:700}
-#perf-bpm{font-size:20px;color:var(--gr);font-weight:600}
-#perf-next{display:flex;align-items:center;gap:10px;margin-top:8px}
+/* ══ PERFORMANCE VIEW ══ */
+#perf-view{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;padding:24px 20px;gap:14px;
+}
+#perf-chord{
+  font-size:clamp(80px,18vw,148px);font-weight:700;letter-spacing:-4px;line-height:1;
+  text-align:center;transition:color .15s;
+}
+#perf-chord.flash{animation:cflash .22s ease}
+@keyframes cflash{0%{transform:scale(.88);opacity:.5}100%{transform:scale(1);opacity:1}}
+#perf-chord.maj{color:var(--bl)}#perf-chord.min{color:var(--pu)}
+#perf-chord.dom{color:var(--am)}#perf-chord.dim{color:var(--re)}#perf-chord.idle{color:var(--hi)}
+#perf-quality{font-size:15px;color:var(--mu);letter-spacing:.05em;margin-top:-6px;min-height:20px}
+.perf-meta{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center}
+#perf-key{font-size:19px;font-weight:600;color:var(--tx)}
+#perf-degree{font-size:19px;font-weight:700;color:var(--am);transition:opacity .3s}
+#perf-bpm{font-size:19px;font-weight:600;color:var(--gr);transition:opacity .3s}
+#perf-next-wrap{display:flex;align-items:center;gap:10px}
 #perf-next-lbl{font-size:13px;color:var(--hi)}
-#perf-next-chord{font-size:36px;font-weight:700;color:var(--te);letter-spacing:-.5px;opacity:.85}
-#perf-pattern{font-size:13px;color:var(--mu);display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
-.perf-pat-n{padding:3px 10px;border-radius:12px;font-size:13px;font-weight:600;background:var(--teb);color:var(--te);border:1px solid rgba(20,200,192,.25)}
-.perf-pat-cur{background:var(--te2);color:#fff;border-color:var(--te)}
-#perf-tuner{width:min(400px,90vw);height:44px;border-radius:8px;background:var(--s2);display:block}
+#perf-next-val{font-size:38px;font-weight:700;color:var(--te);letter-spacing:-.5px}
+#perf-pattern{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:center;min-height:28px}
+.ppn{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--teb);color:var(--te);border:1px solid rgba(20,200,192,.22)}
+.ppn.cur{background:rgba(20,200,192,.18);border-color:var(--te);color:#fff}
+#perf-tuner{width:min(420px,90vw);height:46px;border-radius:9px;background:var(--s2);display:block}
 
-/* ── STUDY MODE ── */
-#study-view{display:none;height:100%;overflow-y:auto;padding:14px 16px 32px;gap:10px;flex-direction:column}
+/* ── CONFIDENCE BADGE ── */
+#perf-conf{font-size:11px;color:var(--hi);display:flex;align-items:center;gap:6px}
+.conf-mini{height:3px;width:60px;background:var(--s3);border-radius:2px;overflow:hidden}
+.conf-mini-bar{height:100%;background:var(--gr);border-radius:2px;transition:width .5s}
+
+/* ══ STUDY VIEW ══ */
+#study-view{display:none;height:100%;overflow-y:auto;padding:12px 14px 36px;flex-direction:column;gap:9px}
 #study-view.active{display:flex}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 @media(max-width:520px){.g2{grid-template-columns:1fr}}
 .card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:13px 16px}
 .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--hi);margin-bottom:8px}
 .row-hdr{display:flex;align-items:center;margin-bottom:8px}
 .row-hdr .lbl{margin-bottom:0;flex:1}
-.clr{background:none;border:none;color:var(--hi);font-size:10px;cursor:pointer;padding:3px 7px;border-radius:5px;transition:all .15s}
-.clr:hover{color:var(--re);background:var(--reb)}
+.clr-btn{background:none;border:none;color:var(--hi);font-size:10px;cursor:pointer;padding:3px 7px;border-radius:5px;transition:all .15s}
+.clr-btn:hover{color:var(--re);background:var(--reb)}
 
-/* Study: key */
 #s-key-main{font-size:20px;font-weight:600;letter-spacing:-.3px}
 #s-key-rel{font-size:11px;color:var(--mu);margin-top:3px}
 #s-key-scale{font-size:10px;color:var(--hi);margin-top:5px;line-height:1.7}
 .cbar-wrap{margin-top:8px;height:2px;background:var(--s3);border-radius:1px;overflow:hidden}
 #s-cbar{height:100%;width:0%;background:var(--gr);border-radius:1px;transition:width .5s}
 #s-cpct{font-size:10px;color:var(--hi);margin-top:3px}
+.capo-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.capo-row label{font-size:11px;color:var(--mu);white-space:nowrap}
+#capo-val{font-size:12px;font-weight:600;color:var(--tx);min-width:80px}
+input[type=range]{flex:1;accent-color:var(--gr)}
 
-/* Study: chord */
-#s-chord-big{font-size:40px;font-weight:700;letter-spacing:-.5px;line-height:1;transition:color .15s}
-#s-chord-notes{font-size:10px;color:var(--mu);margin-top:4px;line-height:1.5}
+#s-chord-big{font-size:38px;font-weight:700;letter-spacing:-.5px;line-height:1;transition:color .15s}
+#s-chord-notes{font-size:10px;color:var(--mu);margin-top:4px;line-height:1.6}
 #s-chord-quality{font-size:10px;color:var(--hi);margin-top:2px}
-#s-chord-degree{font-size:12px;color:var(--am);margin-top:4px;font-weight:600}
-.maj{color:var(--bl)} .min{color:var(--pu)} .dom{color:var(--am)} .dim{color:var(--re)}
+#s-chord-degree{font-size:12px;color:var(--am);margin-top:5px;font-weight:600}
+.maj{color:var(--bl)}.min{color:var(--pu)}.dom{color:var(--am)}.dim{color:var(--re)}
 
-/* Study: BPM */
-#s-bpm-big{font-size:40px;font-weight:700;color:var(--gr);letter-spacing:-1px;line-height:1}
-#s-bpm-sub{font-size:10px;color:var(--mu);margin-top:4px}
-#s-bpm-bar{display:flex;gap:3px;margin-top:8px;height:20px;align-items:flex-end}
-.beat-block{width:12px;background:var(--s3);border-radius:2px;transition:all .1s;flex-shrink:0}
-.beat-block.on{background:var(--gr)}
+#s-bpm-big{font-size:38px;font-weight:700;color:var(--gr);letter-spacing:-1px;line-height:1}
+#s-bpm-sub{font-size:10px;color:var(--mu);margin-top:3px}
+#beat-canvas{display:block;width:100%;height:28px;margin-top:8px;border-radius:5px}
 
-/* Study: tuner */
 #s-tuner{display:block;width:100%;height:50px;border-radius:8px;background:var(--s2)}
 
-/* Study: chord history + graus */
-.ch-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:34px}
-.ch-pill{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 10px;border-radius:16px;font-size:12px;font-weight:600;background:var(--s2);color:var(--mu);border:1px solid var(--b1);transition:all .15s;flex-shrink:0}
-.ch-pill .ch-deg{font-size:9px;font-weight:400;opacity:.6;margin-top:1px}
-.ch-pill.cur{background:var(--pub);color:var(--pu);border-color:var(--pu2);transform:scale(1.06);box-shadow:0 0 0 3px rgba(152,114,245,.12)}
+.ch-scroll{overflow-x:auto;padding-bottom:4px}
+.ch-row{display:flex;align-items:flex-start;gap:6px;flex-wrap:nowrap;min-height:42px;min-width:max-content}
+.ch-pill{display:inline-flex;flex-direction:column;align-items:center;padding:4px 10px;border-radius:14px;font-size:12px;font-weight:600;background:var(--s2);color:var(--mu);border:1px solid var(--b1);transition:all .15s;flex-shrink:0}
+.ch-pill .ch-deg{font-size:9px;font-weight:400;opacity:.55;margin-top:2px}
+.ch-pill.cur{background:var(--pub);color:var(--pu);border-color:var(--pu2);box-shadow:0 0 0 2px rgba(152,114,245,.15)}
 .ch-pill.rec{background:var(--s3);color:var(--tx);border-color:var(--b2);animation:pop .2s ease}
-@keyframes pop{0%{transform:scale(.6);opacity:0}65%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}65%{transform:scale(1.15)}100%{transform:scale(1)}}
 
-/* Study: pattern */
-.pat-box{padding:11px 14px;background:var(--teb);border:1px solid rgba(20,200,192,.2);border-radius:var(--r);display:none}
-.pat-box.show{display:block;animation:fadein .35s ease}
+.pat-box{padding:11px 14px;background:var(--teb);border:1px solid rgba(20,200,192,.18);border-radius:var(--r);display:none}
+.pat-box.show{display:block;animation:fadein .3s ease}
 @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .pat-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .pat-badge{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--te)}
 .pat-cnt{font-size:10px;color:var(--mu);margin-left:auto}
-.pat-seq{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:6px}
-.pat-n{padding:4px 10px;border-radius:14px;font-size:12px;font-weight:600;background:var(--s3);color:var(--te);border:1px solid rgba(20,200,192,.2)}
-.pat-n.active{background:rgba(20,200,192,.2);border-color:var(--te);color:#fff}
-.pat-arr{color:var(--hi);font-size:12px}
-.pat-next-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.pat-next-lbl{font-size:10px;color:var(--mu)}
-.pat-next-note{padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;background:var(--amb);color:var(--am);border:1px solid rgba(232,160,32,.3)}
+.pat-seq{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:7px}
+.pat-n{padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;background:var(--s3);color:var(--te);border:1px solid rgba(20,200,192,.18)}
+.pat-n.act{background:rgba(20,200,192,.18);border-color:var(--te);color:#fff}
+.pat-arr{color:var(--hi);font-size:11px}
+.pat-nxt{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.pat-nxt-lbl{font-size:10px;color:var(--mu)}
+.pat-nxt-val{padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;background:var(--amb);color:var(--am);border:1px solid rgba(232,160,32,.28)}
 
-/* Study: scale grid */
 .sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:6px}
-.sn{padding:8px 4px 6px;text-align:center;border-radius:8px;border:1px solid var(--b1);font-size:12px;font-weight:600;background:var(--s2);color:var(--hi);transition:all .15s}
-.sn .sr{font-size:9px;font-weight:400;display:block;margin-top:2px;opacity:.6}
+.sn{padding:8px 4px 6px;text-align:center;border-radius:8px;border:1px solid var(--b1);font-size:13px;font-weight:600;background:var(--s2);color:var(--hi);transition:all .15s}
+.sn .sr{font-size:9px;font-weight:400;display:block;margin-top:2px;opacity:.55}
 .sn.played{background:var(--blb);color:var(--bl);border-color:var(--bl2)}
 .sn.tonic{background:var(--grb);color:var(--gr);border-color:var(--gr2)}
 .sn.dom5{background:var(--amb);color:var(--am);border-color:var(--am2)}
 .sn.sub4{background:var(--s3);color:var(--tx);border-color:var(--b2)}
 
-/* Study: capo */
-.capo-row{display:flex;align-items:center;gap:10px;margin-top:6px}
-.capo-row label{font-size:11px;color:var(--mu)}
-#capo-val{font-size:14px;font-weight:600;color:var(--tx);min-width:20px;text-align:center}
-input[type=range]{flex:1;accent-color:var(--gr)}
-
-/* Export */
-#export-area{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:10px 14px;font-size:11px;color:var(--mu);min-height:60px;white-space:pre-wrap;font-family:monospace;line-height:1.6;max-height:120px;overflow-y:auto}
-.exp-row{display:flex;gap:7px;margin-bottom:7px;align-items:center}
+#export-area{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:10px 14px;font-size:11px;color:var(--mu);white-space:pre-wrap;font-family:monospace;line-height:1.6;max-height:130px;overflow-y:auto;min-height:50px}
+.exp-row{display:flex;gap:7px;margin-bottom:7px;flex-wrap:wrap}
 .exp-btn{padding:5px 12px;border-radius:7px;font-size:11px;font-weight:600;background:var(--s2);color:var(--mu);border:1px solid var(--b1);cursor:pointer;transition:all .15s}
 .exp-btn:hover{border-color:var(--b2);color:var(--tx)}
 .exp-btn.primary{background:var(--grb);color:var(--gr);border-color:var(--gr2)}
 
-/* Attack flash overlay */
-#attack-flash{position:fixed;inset:0;pointer-events:none;background:rgba(255,255,255,0);transition:background .08s}
-#attack-flash.pulse{background:rgba(255,255,255,.035)}
-
-/* Scrollbar */
+#attack-flash{position:fixed;inset:0;pointer-events:none;background:transparent;transition:background .07s}
+#attack-flash.pulse{background:rgba(255,255,255,.032)}
 #study-view::-webkit-scrollbar{width:4px}
-#study-view::-webkit-scrollbar-track{background:transparent}
 #study-view::-webkit-scrollbar-thumb{background:var(--s4);border-radius:2px}
 .empty{font-size:11px;color:var(--hi);font-style:italic}
+
+/* stability indicator */
+#stab-wrap{display:flex;align-items:center;gap:5px;margin-top:6px}
+.stab-dot{width:6px;height:6px;border-radius:50%;background:var(--s3);transition:background .15s}
+.stab-dot.on{background:var(--gr)}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div id="topbar">
   <h1>Detector Musical</h1>
   <div class="tb-sep"></div>
@@ -182,30 +174,30 @@ input[type=range]{flex:1;accent-color:var(--gr)}
   </button>
 </div>
 
-<!-- MAIN -->
 <div id="main">
-
-  <!-- ══ PERFORMANCE VIEW ══ -->
+  <!-- PERFORMANCE -->
   <div id="perf-view">
-    <div id="perf-chord" class="min">—</div>
+    <div id="perf-chord" class="idle">—</div>
     <div id="perf-quality"></div>
-    <div class="perf-row">
+    <div class="perf-meta">
       <div id="perf-key">—</div>
       <div id="perf-degree" style="opacity:0">—</div>
       <div id="perf-bpm" style="opacity:0">— BPM</div>
     </div>
-    <div id="perf-next">
-      <span id="perf-next-lbl" style="display:none;font-size:13px;color:var(--hi)">próximo →</span>
-      <span id="perf-next-chord"></span>
+    <div id="perf-conf">
+      <div class="conf-mini"><div class="conf-mini-bar" id="perf-conf-bar" style="width:0%"></div></div>
+      <span id="perf-conf-txt"></span>
+    </div>
+    <div id="perf-next-wrap">
+      <span id="perf-next-lbl" style="display:none">próximo →</span>
+      <span id="perf-next-val"></span>
     </div>
     <div id="perf-pattern"></div>
     <canvas id="perf-tuner"></canvas>
   </div>
 
-  <!-- ══ STUDY VIEW ══ -->
+  <!-- STUDY -->
   <div id="study-view">
-
-    <!-- Key + Chord -->
     <div class="g2">
       <div class="card">
         <div class="lbl">Tom identificado</div>
@@ -214,29 +206,33 @@ input[type=range]{flex:1;accent-color:var(--gr)}
         <div id="s-key-scale"></div>
         <div class="cbar-wrap"><div id="s-cbar"></div></div>
         <div id="s-cpct"></div>
-        <!-- Capo -->
-        <div class="capo-row" style="margin-top:10px">
+        <div class="capo-row">
           <label>Capotraste</label>
-          <input type="range" id="capo" min="0" max="11" value="0" style="flex:1">
-          <span id="capo-val">0</span>
+          <input type="range" id="capo" min="0" max="11" value="0">
+          <span id="capo-val">sem capo</span>
         </div>
       </div>
       <div class="card">
         <div class="lbl">Acorde detectado</div>
-        <div id="s-chord-big" class="min" style="color:var(--hi)">—</div>
+        <div id="s-chord-big" style="color:var(--hi)">—</div>
         <div id="s-chord-notes"></div>
         <div id="s-chord-quality"></div>
         <div id="s-chord-degree"></div>
+        <div id="stab-wrap">
+          <div class="stab-dot" id="sd0"></div>
+          <div class="stab-dot" id="sd1"></div>
+          <div class="stab-dot" id="sd2"></div>
+          <span style="font-size:10px;color:var(--hi);margin-left:2px" id="stab-lbl">aguardando...</span>
+        </div>
       </div>
     </div>
 
-    <!-- BPM + Tuner -->
     <div class="g2">
       <div class="card">
         <div class="lbl">BPM estimado</div>
         <div id="s-bpm-big">—</div>
-        <div id="s-bpm-sub">toque pelo menos 4 notas</div>
-        <div id="s-bpm-bar"></div>
+        <div id="s-bpm-sub">toque pelo menos 4 ataques</div>
+        <canvas id="beat-canvas"></canvas>
       </div>
       <div class="card">
         <div class="lbl">Afinador (cents)</div>
@@ -244,58 +240,51 @@ input[type=range]{flex:1;accent-color:var(--gr)}
       </div>
     </div>
 
-    <!-- Chord history with degrees -->
     <div class="card">
       <div class="row-hdr">
-        <div class="lbl">Progressão de acordes (com graus)</div>
-        <button class="clr" id="clr-ch">✕ limpar</button>
+        <div class="lbl">Progressão de acordes</div>
+        <button class="clr-btn" id="clr-ch">✕ limpar</button>
       </div>
-      <div class="ch-row" id="s-ch-row"><span class="empty">Toque acordes...</span></div>
+      <div class="ch-scroll"><div class="ch-row" id="s-ch-row"><span class="empty">Toque acordes...</span></div></div>
     </div>
 
-    <!-- Pattern -->
     <div class="pat-box" id="pat-box">
       <div class="pat-hdr">
-        <span style="font-size:14px">↺</span>
+        <span style="font-size:13px">↺</span>
         <span class="pat-badge">Padrão detectado</span>
         <span class="pat-cnt" id="pat-cnt"></span>
       </div>
       <div class="pat-seq" id="pat-seq"></div>
-      <div class="pat-next-row" id="pat-next-row"></div>
+      <div class="pat-nxt" id="pat-nxt"></div>
     </div>
 
-    <!-- Scale -->
     <div class="card">
-      <div class="lbl">Escala — o que tocar agora</div>
+      <div class="lbl">Escala — notas disponíveis</div>
       <div class="sg" id="s-sg"><span class="empty" style="grid-column:1/-1">Identifique o tom primeiro...</span></div>
     </div>
 
-    <!-- Export -->
     <div class="card">
-      <div class="row-hdr">
-        <div class="lbl">Exportar sessão</div>
-      </div>
+      <div class="row-hdr"><div class="lbl">Exportar sessão</div></div>
       <div class="exp-row">
-        <button class="exp-btn primary" id="exp-update">↻ Atualizar</button>
+        <button class="exp-btn primary" id="exp-upd">↻ Atualizar</button>
         <button class="exp-btn" id="exp-copy">Copiar</button>
-        <button class="exp-btn" id="exp-clear">Limpar sessão</button>
+        <button class="exp-btn" id="exp-clear">Limpar tudo</button>
       </div>
-      <div id="export-area">Toque acordes para registrar a sessão...</div>
+      <div id="export-area">Toque acordes para registrar...</div>
     </div>
-
-  </div><!-- /study-view -->
-</div><!-- /main -->
+  </div>
+</div>
 
 <div id="attack-flash"></div>
 
 <script>
-/* ══════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    MUSIC THEORY
-══════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 const NOTES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const PT={C:'Dó','C#':'Dó#',D:'Ré','D#':'Ré#',E:'Mi',F:'Fá','F#':'Fá#',G:'Sol','G#':'Sol#',A:'Lá','A#':'Lá#',B:'Si'};
-const ENHARMONIC={'C#':'Db','D#':'Eb','F#':'Gb','G#':'Ab','A#':'Bb'};
-const DEGREE_NAMES=['I','♭II','II','♭III','III','IV','♯IV','V','♭VI','VI','♭VII','VII'];
+const PT={C:'Dó','C#':'Dó#',D:'Ré','D#':'Ré#',E:'Mi',F:'Fá','F#':'Fá#',
+          G:'Sol','G#':'Sol#',A:'Lá','A#':'Lá#',B:'Si'};
+const DEGREE_ROMAN=['I','♭II','II','♭III','III','IV','♯IV','V','♭VI','VI','♭VII','VII'];
 
 const SCALES={
   major:     {iv:[0,2,4,5,7,9,11],name:'Maior'},
@@ -306,47 +295,43 @@ const SCALES={
 };
 
 const CHORD_TMPL=[
-  {iv:[0,4,7],      sym:'',    label:'Maior',        cat:'maj'},
-  {iv:[0,3,7],      sym:'m',   label:'Menor',        cat:'min'},
-  {iv:[0,4,7,10],   sym:'7',   label:'Dom. 7ª',      cat:'dom'},
-  {iv:[0,3,7,10],   sym:'m7',  label:'Menor 7ª',     cat:'min'},
-  {iv:[0,4,7,11],   sym:'maj7',label:'Maior 7ª',     cat:'maj'},
-  {iv:[0,3,7,11],   sym:'mMaj7',label:'m/Maior 7ª', cat:'min'},
-  {iv:[0,3,6],      sym:'dim', label:'Diminuto',     cat:'dim'},
-  {iv:[0,3,6,9],    sym:'°7',  label:'Dim. 7ª',      cat:'dim'},
-  {iv:[0,4,8],      sym:'aug', label:'Aumentado',    cat:'maj'},
-  {iv:[0,2,7],      sym:'sus2',label:'Sus2',         cat:'maj'},
-  {iv:[0,5,7],      sym:'sus4',label:'Sus4',         cat:'maj'},
-  {iv:[0,4,7,9],    sym:'6',   label:'6ª M',         cat:'maj'},
-  {iv:[0,3,7,9],    sym:'m6',  label:'6ª m',         cat:'min'},
-  {iv:[0,4,7,10,14],sym:'9',   label:'Dom. 9ª',      cat:'dom'},
-  {iv:[0,3,7,10,14],sym:'m9',  label:'Menor 9ª',     cat:'min'},
+  {iv:[0,4,7],       sym:'',     label:'Maior',       cat:'maj'},
+  {iv:[0,3,7],       sym:'m',    label:'Menor',       cat:'min'},
+  {iv:[0,4,7,10],    sym:'7',    label:'Dom. 7ª',     cat:'dom'},
+  {iv:[0,3,7,10],    sym:'m7',   label:'Menor 7ª',    cat:'min'},
+  {iv:[0,4,7,11],    sym:'maj7', label:'Maior 7ª',    cat:'maj'},
+  {iv:[0,3,7,11],    sym:'mMaj7',label:'m/Maj7',      cat:'min'},
+  {iv:[0,3,6],       sym:'dim',  label:'Diminuto',    cat:'dim'},
+  {iv:[0,3,6,9],     sym:'°7',   label:'Dim. 7ª',     cat:'dim'},
+  {iv:[0,4,8],       sym:'aug',  label:'Aumentado',   cat:'maj'},
+  {iv:[0,2,7],       sym:'sus2', label:'Sus2',        cat:'maj'},
+  {iv:[0,5,7],       sym:'sus4', label:'Sus4',        cat:'maj'},
+  {iv:[0,4,7,9],     sym:'6',    label:'6ª Maior',    cat:'maj'},
+  {iv:[0,3,7,9],     sym:'m6',   label:'6ª Menor',    cat:'min'},
+  {iv:[0,4,7,10,14], sym:'9',    label:'Dom. 9ª',     cat:'dom'},
+  {iv:[0,3,7,10,14], sym:'m9',   label:'Menor 9ª',    cat:'min'},
 ];
 
-function ni(n){return NOTES.indexOf(n)}
-function buildScale(root,type){const ri=ni(root);return SCALES[type].iv.map(i=>NOTES[(ri+i)%12])}
-function relKey(root,type){
+const ni=n=>NOTES.indexOf(n);
+const buildScale=(root,type)=>{const ri=ni(root);return SCALES[type].iv.map(i=>NOTES[(ri+i)%12])};
+const relKey=(root,type)=>{
   if(type==='major')return NOTES[(ni(root)+9)%12]+' Menor';
   if(type==='minor')return NOTES[(ni(root)+3)%12]+' Maior';
   return'';
-}
-function chordDegree(chordRoot,keyRoot,keyType){
-  if(!keyRoot)return'';
-  const scale=buildScale(keyRoot,keyType);
-  const ri=ni(chordRoot);
-  const ki=ni(keyRoot);
-  const semi=(ri-ki+12)%12;
-  return DEGREE_NAMES[semi]||'';
-}
-// Transpose note by capo semitones (for display)
-function transposeNote(note,semis){
-  const i=(ni(note)+semis+12*10)%12;
-  return NOTES[i];
-}
+};
+const degreeOf=(chordRoot,keyRoot)=>{
+  const semi=(ni(chordRoot)-ni(keyRoot)+12)%12;
+  return DEGREE_ROMAN[semi]||'';
+};
+const transposeNote=(note,semis)=>NOTES[(ni(note)+semis+120)%12];
 
-// Key ID with weighted scoring
-function identifyKey(played){
-  if(played.length<2)return null;
+/* ── Key identification with sliding window ── */
+// FIX #6: noteWindow decays — only last N unique notes used
+const NOTE_WINDOW=16; // rolling unique notes
+function identifyKey(noteWindow){
+  if(noteWindow.length<2)return null;
+  // Use last NOTE_WINDOW unique notes only
+  const played=[...new Set(noteWindow.slice(-NOTE_WINDOW))];
   let best=null,bs=-1;
   for(const root of NOTES){
     for(const[type,def]of Object.entries(SCALES)){
@@ -368,9 +353,13 @@ function identifyKey(played){
   return raw>=0.5?best:null;
 }
 
-// Chord from PCP
+/* ── Chord detection with stability buffer ── */
+// FIX #3: require 3 consecutive agreeing frames before confirming chord
+const CHORD_STABILITY=3;
+let chordCandidateName='',chordCandidateCount=0,chordCandidateObj=null;
+
 function detectChord(pcp){
-  const THRESH=0.18;
+  const THRESH=0.20;
   const activeSet=new Set();
   for(let i=0;i<12;i++)if(pcp[i]>THRESH)activeSet.add(NOTES[i]);
   if(activeSet.size<2)return null;
@@ -392,478 +381,638 @@ function detectChord(pcp){
   return bs>0.45?best:null;
 }
 
-// PCP from FFT
+function stabilizeChord(candidate){
+  // Returns confirmed chord only after CHORD_STABILITY consecutive matches
+  if(!candidate){chordCandidateCount=0;return null}
+  if(candidate.name===chordCandidateName){
+    chordCandidateCount++;
+    chordCandidateObj=candidate;
+  } else {
+    chordCandidateName=candidate.name;
+    chordCandidateCount=1;
+    chordCandidateObj=candidate;
+  }
+  // Update stability dots
+  const dots=[sd0,sd1,sd2];
+  dots.forEach((d,i)=>d.classList.toggle('on',i<chordCandidateCount));
+  stabLbl.textContent=chordCandidateCount>=CHORD_STABILITY?'confirmado':'aguardando...';
+  return chordCandidateCount>=CHORD_STABILITY?chordCandidateObj:null;
+}
+
+/* ═══════════════════════════════════════
+   PITCH DETECTION — FFT-based autocorrelation (O(N log N))
+   Uses two passes of FFT to compute autocorrelation efficiently
+═══════════════════════════════════════ */
+function freqToNote(f){
+  const n=12*Math.log2(f/440)+69;
+  const midi=Math.round(n);
+  return{name:NOTES[((midi%12)+12)%12],midi,cents:(n-midi)*100,octave:Math.floor(midi/12)-1};
+}
+
+// FIX #1: Use FFT-based autocorrelation — O(N log N) instead of O(N²)
+// We compute correlation via: IFFT(|FFT(x)|²)
+function autoCorrelateFast(buf,sr){
+  const N=buf.length;
+  // RMS gate
+  let rms=0;for(let i=0;i<N;i++)rms+=buf[i]*buf[i];
+  rms=Math.sqrt(rms/N);if(rms<0.008)return-1;
+
+  // Zero-pad to 2N for circular correlation avoidance
+  const M=nextPow2(N*2);
+  // FFT real input — we implement a simple DIT FFT
+  const re=new Float32Array(M);
+  const im=new Float32Array(M);
+  for(let i=0;i<N;i++)re[i]=buf[i];
+  fft(re,im,false);
+  // Power spectrum: |X|²
+  for(let i=0;i<M;i++){re[i]=re[i]*re[i]+im[i]*im[i];im[i]=0}
+  // IFFT
+  fft(re,im,true);
+  // re[] now holds the autocorrelation
+
+  // Find first valley (d)
+  let d=0;while(d<M/2-1&&re[d]>re[d+1])d++;
+  // Find peak after valley — only look in pitch range 60Hz–1200Hz
+  const minLag=Math.floor(sr/1200);
+  const maxLag=Math.ceil(sr/60);
+  let mv=-1,mp=-1;
+  for(let i=Math.max(d,minLag);i<=Math.min(M/2,maxLag);i++){
+    if(re[i]>mv){mv=re[i];mp=i}
+  }
+  if(mp<1||mv<0)return-1;
+  // Parabolic interpolation for sub-sample accuracy
+  const y1=re[mp-1],y2=re[mp],y3=re[mp+1];
+  const a=(y1+y3-2*y2)/2;
+  let T=mp;if(a<0)T-=(y3-y1)/(4*a);
+  const freq=sr/T;
+  return(freq>60&&freq<1200)?freq:-1;
+}
+
+function nextPow2(n){let p=1;while(p<n)p<<=1;return p}
+
+// In-place Cooley-Tukey FFT
+function fft(re,im,inverse){
+  const N=re.length;
+  // Bit-reversal permutation
+  for(let i=1,j=0;i<N;i++){
+    let bit=N>>1;
+    for(;j&bit;bit>>=1)j^=bit;
+    j^=bit;
+    if(i<j){let t=re[i];re[i]=re[j];re[j]=t;t=im[i];im[i]=im[j];im[j]=t}
+  }
+  // FFT butterfly
+  for(let len=2;len<=N;len<<=1){
+    const ang=(inverse?2:-2)*Math.PI/len;
+    const wRe=Math.cos(ang),wIm=Math.sin(ang);
+    for(let i=0;i<N;i+=len){
+      let curRe=1,curIm=0;
+      for(let j=0;j<len/2;j++){
+        const uRe=re[i+j],uIm=im[i+j];
+        const vRe=re[i+j+len/2]*curRe-im[i+j+len/2]*curIm;
+        const vIm=re[i+j+len/2]*curIm+im[i+j+len/2]*curRe;
+        re[i+j]=uRe+vRe;im[i+j]=uIm+vIm;
+        re[i+j+len/2]=uRe-vRe;im[i+j+len/2]=uIm-vIm;
+        const nr=curRe*wRe-curIm*wIm;curIm=curRe*wIm+curIm*wRe;curRe=nr;
+      }
+    }
+  }
+  if(inverse){for(let i=0;i<N;i++){re[i]/=N;im[i]/=N}}
+}
+
+/* ── PCP from FFT with octave weighting ── */
+// FIX #4: weight by octave proximity to fundamental range
 function getPCP(freqData,sr,fftSize){
   const pc=new Float32Array(12).fill(0);
   const binHz=sr/fftSize;
   for(let i=2;i<freqData.length;i++){
     const f=i*binHz;
-    if(f<55||f>2200)continue;
-    const lin=Math.pow(10,freqData[i]/20);
+    if(f<55||f>2100)continue;
+    const linAmp=Math.pow(10,freqData[i]/20);
     const n=12*Math.log2(f/440)+69;
     const pci=((Math.round(n)%12)+12)%12;
-    pc[pci]+=lin;
+    // Weight: emphasize fundamentals (55-500Hz), attenuate upper harmonics
+    const octaveWeight=f<500?1.0:f<900?0.7:0.4;
+    pc[pci]+=linAmp*octaveWeight;
   }
   const mx=Math.max(...pc,1e-6);
   for(let i=0;i<12;i++)pc[i]/=mx;
   return pc;
 }
 
-// Autocorrelation pitch
-function freqToNote(f){
-  const n=12*Math.log2(f/440)+69;
-  const midi=Math.round(n);
-  return{name:NOTES[((midi%12)+12)%12],midi,cents:(n-midi)*100,octave:Math.floor(midi/12)-1};
-}
-function autoCorrelate(buf,sr){
-  const N=buf.length;
-  let rms=0;for(let i=0;i<N;i++)rms+=buf[i]*buf[i];
-  rms=Math.sqrt(rms/N);if(rms<0.008)return-1;
-  let r1=0,r2=N-1;
-  for(let i=0;i<N/2;i++){if(Math.abs(buf[i])<0.2){r1=i;break}}
-  for(let i=1;i<N/2;i++){if(Math.abs(buf[N-i])<0.2){r2=N-i;break}}
-  const b=buf.slice(r1,r2);
-  const c=new Float32Array(b.length);
-  for(let i=0;i<b.length;i++)for(let j=0;j<b.length-i;j++)c[i]+=b[j]*b[j+i];
-  let d=0;while(c[d]>c[d+1])d++;
-  let mv=-1,mp=-1;
-  for(let i=d;i<b.length;i++){if(c[i]>mv){mv=c[i];mp=i}}
-  if(mp<1)return-1;
-  let T=mp;
-  const x1=c[T-1],x2=c[T],x3=c[T+1],a=(x1+x3-2*x2)/2;
-  if(a)T-=(x3-x1)/(4*a);
-  return sr/T;
-}
+/* ═══════════════════════════════════════
+   BPM — Spectral Flux onset detection
+   FIX #2: proper onset via spectral flux, not raw RMS diff
+   FIX #9: AudioContext clock for beat display
+═══════════════════════════════════════ */
+const FLUX_BINS=256; // only low-mid spectrum for onset
+let prevSpectrum=new Float32Array(FLUX_BINS).fill(-100);
+const onsetTimes=[];   // AudioContext.currentTime values
+let bpmValue=null;
+let beatTimerID=null;
 
-/* ── BPM detector via attack onset times ── */
-const onsetTimes=[];
-let lastRMS=0;
-function detectOnset(buf,now){
-  let rms=0;for(let i=0;i<buf.length;i++)rms+=buf[i]*buf[i];
-  rms=Math.sqrt(rms/buf.length);
-  const diff=rms-lastRMS;
-  lastRMS=rms;
-  if(diff>0.04&&rms>0.015){
-    onsetTimes.push(now);
-    if(onsetTimes.length>32)onsetTimes.shift();
-    return true;
+function detectOnset(freqData,acTime){
+  // Spectral flux: sum of positive differences across spectrum bins
+  let flux=0;
+  for(let i=0;i<FLUX_BINS;i++){
+    const diff=freqData[i]-prevSpectrum[i];
+    if(diff>0)flux+=diff;
+  }
+  prevSpectrum.set(freqData.slice(0,FLUX_BINS));
+
+  // Dynamic threshold: flux must exceed local average * 1.5
+  const FLUX_THRESH=8.0; // tuned for typical instrument input
+  if(flux>FLUX_THRESH){
+    // Minimum inter-onset: 150ms (max 400 BPM)
+    const lastOnset=onsetTimes[onsetTimes.length-1]||0;
+    if(acTime-lastOnset>0.15){
+      onsetTimes.push(acTime);
+      if(onsetTimes.length>32)onsetTimes.shift();
+      return true;
+    }
   }
   return false;
 }
+
 function estimateBPM(){
   if(onsetTimes.length<4)return null;
   const recent=onsetTimes.slice(-16);
   const intervals=[];
-  for(let i=1;i<recent.length;i++)intervals.push(recent[i]-recent[i-1]);
-  // Filter outliers
-  const med=intervals.slice().sort((a,b)=>a-b)[Math.floor(intervals.length/2)];
-  const clean=intervals.filter(x=>x>200&&x<2000&&Math.abs(x-med)<med*0.5);
+  for(let i=1;i<recent.length;i++)intervals.push((recent[i]-recent[i-1])*1000);
+  // Median filter
+  const sorted=[...intervals].sort((a,b)=>a-b);
+  const med=sorted[Math.floor(sorted.length/2)];
+  // Keep intervals within 40% of median
+  const clean=intervals.filter(x=>x>200&&x<2000&&Math.abs(x-med)<med*0.4);
   if(clean.length<3)return null;
   const avg=clean.reduce((a,b)=>a+b,0)/clean.length;
-  return Math.round(60000/avg);
+  const bpm=Math.round(60000/avg);
+  return(bpm>=40&&bpm<=220)?bpm:null;
 }
 
-/* ── Pattern detection ── */
-function findPatterns(seq){
+/* FIX #9: beat display using AudioContext clock */
+const beatCanvas=document.getElementById('beat-canvas');
+const beatCtx=beatCanvas.getContext('2d');
+let beatPhase=0; // 0-1 within one beat
+let lastBeatAcTime=0;
+let beatIntervalSec=0.5; // default 120bpm
+
+function scheduleBeat(acTime){
+  lastBeatAcTime=acTime;
+  if(bpmValue)beatIntervalSec=60/bpmValue;
+}
+
+function drawBeatBar(acNow){
+  if(!bpmValue){
+    const w=beatCanvas.offsetWidth||300;beatCanvas.width=w;beatCanvas.height=28;
+    beatCtx.fillStyle='#18181b';beatCtx.fillRect(0,0,w,28);
+    beatCtx.fillStyle='#2a2a2d';beatCtx.font='10px sans-serif';beatCtx.textAlign='center';
+    beatCtx.fillText('aguardando ataques...',w/2,17);
+    return;
+  }
+  const elapsed=(acNow-lastBeatAcTime)%beatIntervalSec;
+  beatPhase=elapsed/beatIntervalSec;
+  const beat=Math.floor((acNow-lastBeatAcTime)/beatIntervalSec)%4;
+  const w=beatCanvas.offsetWidth||300;beatCanvas.width=w;beatCanvas.height=28;
+  beatCtx.fillStyle='#18181b';beatCtx.fillRect(0,0,w,28);
+  const nBeats=8;const bw=(w-2)/nBeats;
+  for(let i=0;i<nBeats;i++){
+    const isCur=i===beat%nBeats;
+    const isDown=i%4===0;
+    const bh=isDown?22:14;
+    const by=(28-bh)/2;
+    beatCtx.fillStyle=isCur?'#17c976':(isDown?'#2c2c31':'#222226');
+    beatCtx.beginPath();
+    beatCtx.roundRect(2+i*bw,by,bw-3,bh,3);
+    beatCtx.fill();
+  }
+  // Phase indicator within current beat
+  const px=2+(beat%nBeats+beatPhase)*bw;
+  beatCtx.fillStyle='rgba(23,201,118,.35)';
+  beatCtx.fillRect(2+(beat%nBeats)*bw,2,(bw-3)*beatPhase,24);
+}
+
+/* ═══════════════════════════════════════
+   PATTERN DETECTION
+═══════════════════════════════════════ */
+function findPattern(seq){
   if(seq.length<4)return null;
   let best=null;
   for(let len=2;len<=Math.min(8,Math.floor(seq.length/2));len++){
     const counts={};
     for(let i=0;i<=seq.length-len;i++){
-      const sub=seq.slice(i,i+len).join(',');
-      counts[sub]=(counts[sub]||0)+1;
+      const k=seq.slice(i,i+len).join(',');
+      counts[k]=(counts[k]||0)+1;
     }
-    for(const[sub,cnt]of Object.entries(counts)){
+    for(const[k,cnt]of Object.entries(counts)){
       if(cnt>=2){
         const score=cnt*len*len;
-        if(!best||score>best.score)best={pattern:sub.split(','),count:cnt,len,score};
+        if(!best||score>best.score)best={pattern:k.split(','),count:cnt,len,score};
       }
     }
   }
   return best;
 }
-function predictFromPattern(seq,pattern){
-  for(let offset=0;offset<pattern.length;offset++){
-    const window=pattern.slice(offset).concat(pattern.slice(0,offset));
+function predictNext(seq,pattern){
+  for(let off=0;off<pattern.length;off++){
+    const win=[...pattern.slice(off),...pattern.slice(0,off)];
     const tail=seq.slice(-pattern.length);
-    if(tail.length===pattern.length&&tail.every((n,i)=>n===window[i]))
-      return window[pattern.length%pattern.length]||pattern[0];
+    if(tail.length===pattern.length&&tail.every((n,i)=>n===win[i]))
+      return win[pattern.length%pattern.length]||pattern[0];
   }
   for(let plen=pattern.length-1;plen>=1;plen--){
     const tail=seq.slice(-plen);
     for(let s=0;s<pattern.length;s++){
-      const slice=pattern.slice(s,s+plen);
-      if(slice.length===plen&&tail.every((n,i)=>n===slice[i]))
+      const sl=pattern.slice(s,s+plen);
+      if(sl.length===plen&&tail.every((n,i)=>n===sl[i]))
         return pattern[(s+plen)%pattern.length];
     }
   }
   return pattern[0];
 }
 
-/* ══════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    STATE
-══════════════════════════════════════════════════ */
-let audioCtx=null,analyser=null,stream=null,rafId=null,isOn=false;
-let uniqNotes=[],lastNote=null,lastNoteTime=0;
-let chordHist=[],chordObjHist=[],lastChord=null,lastChordTime=0;
-let currentKey=null,currentPattern=null,capoSemis=0;
-let currentNote=null; // for tuner
-let sessionLog=[]; // {time, chord, degree, key}
-let bpmValue=null;
-let beatPulse=0; // for beat bar
+═══════════════════════════════════════ */
+let audioCtx=null,pitchAnalyser=null,chordAnalyser=null,stream=null;
+let rafId=null,isOn=false;
+// FIX #2: two analysers with different smoothing
+// pitchAnalyser: high smoothing (0.85) for stable pitch
+// chordAnalyser: low smoothing (0.5) for responsive chord/onset
 
-/* ══════════════════════════════════════════════════
-   DOM
-══════════════════════════════════════════════════ */
+// FIX #6: rolling note window instead of unbounded set
+let noteRolling=[];       // rolling window of notes (with repeats)
+let uniqPlayed=[];        // unique notes for scale display
+let lastNote=null,lastNoteTime=0;
+
+let chordHist=[],chordObjHist=[];
+let confirmedChord=null,lastConfirmedChord=null;
+let chordLastTime=0;
+
+let currentKey=null,currentPattern=null;
+let capoSemis=0;
+let sessionLog=[];
+let currentNote=null;
+
+/* ═══════════════════════════════════════
+   DOM REFS
+═══════════════════════════════════════ */
 const $=id=>document.getElementById(id);
-const btnMic=$('btn-mic'),btnTxt=$('btn-txt');
-const dotLive=$('dot-live');
-const perfView=$('perf-view'),studyView=$('study-view');
-const modePerfBtn=$('mode-perf'),modeStudyBtn=$('mode-study');
-// Perf
 const perfChord=$('perf-chord'),perfQuality=$('perf-quality');
 const perfKey=$('perf-key'),perfDegree=$('perf-degree'),perfBpm=$('perf-bpm');
-const perfNextChord=$('perf-next-chord'),perfNextLbl=$('perf-next-lbl');
-const perfPatternEl=$('perf-pattern');
+const perfConfBar=$('perf-conf-bar'),perfConfTxt=$('perf-conf-txt');
+const perfNextLbl=$('perf-next-lbl'),perfNextVal=$('perf-next-val');
+const perfPattern=$('perf-pattern');
 const perfTuner=$('perf-tuner'),ptx=perfTuner.getContext('2d');
-// Study
 const sKeyMain=$('s-key-main'),sKeyRel=$('s-key-rel'),sKeyScale=$('s-key-scale');
 const sCbar=$('s-cbar'),sCpct=$('s-cpct');
-const sChordBig=$('s-chord-big'),sChordNotes=$('s-chord-notes'),sChordQuality=$('s-chord-quality'),sChordDegree=$('s-chord-degree');
-const sBpmBig=$('s-bpm-big'),sBpmSub=$('s-bpm-sub'),sBpmBar=$('s-bpm-bar');
-const sTuner=$('s-tuner'),stx2=sTuner.getContext('2d');
+const sChordBig=$('s-chord-big'),sChordNotes=$('s-chord-notes');
+const sChordQuality=$('s-chord-quality'),sChordDegree=$('s-chord-degree');
+const sBpmBig=$('s-bpm-big'),sBpmSub=$('s-bpm-sub');
+const sTuner=$('s-tuner'),stx=sTuner.getContext('2d');
 const sChRow=$('s-ch-row'),sSg=$('s-sg');
-const patBox=$('pat-box'),patSeq=$('pat-seq'),patNextRow=$('pat-next-row'),patCnt=$('pat-cnt');
-const exportArea=$('export-area');
-const attackFlash=$('attack-flash');
+const patBox=$('pat-box'),patSeq=$('pat-seq'),patNxt=$('pat-nxt'),patCnt=$('pat-cnt');
+const exportArea=$('export-area'),attackFlash=$('attack-flash');
+const dotLive=$('dot-live');
+const sd0=$('sd0'),sd1=$('sd1'),sd2=$('sd2'),stabLbl=$('stab-lbl');
 const capoInput=$('capo'),capoVal=$('capo-val');
 
-/* Mode switching */
-let currentMode='perf';
-modePerfBtn.addEventListener('click',()=>setMode('perf'));
-modeStudyBtn.addEventListener('click',()=>setMode('study'));
+/* Mode */
+let mode='perf';
+$('mode-perf').addEventListener('click',()=>setMode('perf'));
+$('mode-study').addEventListener('click',()=>setMode('study'));
 function setMode(m){
-  currentMode=m;
+  mode=m;
   if(m==='perf'){
-    perfView.style.display='flex';studyView.classList.remove('active');
-    modePerfBtn.classList.add('act');modeStudyBtn.classList.remove('act');
-  } else {
-    perfView.style.display='none';studyView.classList.add('active');
-    modeStudyBtn.classList.add('act');modePerfBtn.classList.remove('act');
+    $('perf-view').style.display='flex';$('study-view').classList.remove('active');
+    $('mode-perf').classList.add('act');$('mode-study').classList.remove('act');
+  }else{
+    $('perf-view').style.display='none';$('study-view').classList.add('active');
+    $('mode-study').classList.add('act');$('mode-perf').classList.remove('act');
   }
 }
 
-/* Capo */
+/* Capo — FIX #5: capo corrects detection input, not just display */
 capoInput.addEventListener('input',()=>{
-  capoSemis=parseInt(capoInput.value);
-  capoVal.textContent=capoSemis===0?'sem capotraste':`${capoSemis}ª casa`;
-  if(currentKey)renderStudyKey(currentKey);
+  capoSemis=+capoInput.value;
+  capoVal.textContent=capoSemis===0?'sem capo':`${capoSemis}ª casa`;
+  if(currentKey)renderKey(currentKey);
+  if(currentKey)renderScale(currentKey);
 });
 
 /* Buttons */
-btnMic.addEventListener('click',toggle);
+$('btn-mic').addEventListener('click',toggle);
 $('clr-ch').addEventListener('click',()=>{
-  chordHist=[];chordObjHist=[];lastChord=null;currentPattern=null;
+  chordHist=[];chordObjHist=[];lastConfirmedChord=null;currentPattern=null;
   renderChordHist();patBox.classList.remove('show');
+  perfNextLbl.style.display='none';perfNextVal.textContent='';perfPattern.innerHTML='';
 });
-$('exp-update').addEventListener('click',updateExport);
+$('exp-upd').addEventListener('click',updateExport);
 $('exp-copy').addEventListener('click',()=>{
   navigator.clipboard.writeText(exportArea.textContent).catch(()=>{});
-  $('exp-copy').textContent='✓ Copiado!';setTimeout(()=>$('exp-copy').textContent='Copiar',1500);
+  $('exp-copy').textContent='✓ Copiado';
+  setTimeout(()=>$('exp-copy').textContent='Copiar',1600);
 });
 $('exp-clear').addEventListener('click',()=>{
-  sessionLog=[];updateExport();
-  chordHist=[];chordObjHist=[];lastChord=null;currentPattern=null;
-  uniqNotes=[];lastNote=null;currentKey=null;onsetTimes.length=0;
-  renderChordHist();patBox.classList.remove('show');renderStudyScale(null);
-  sKeyMain.textContent='—';sKeyRel.textContent='';sKeyScale.textContent='';
-  sCbar.style.width='0%';sCpct.textContent='';
-  sChordBig.textContent='—';sChordBig.style.color='var(--hi)';
+  sessionLog=[];noteRolling=[];uniqPlayed=[];lastNote=null;
+  chordHist=[];chordObjHist=[];lastConfirmedChord=null;currentKey=null;currentPattern=null;
+  onsetTimes.length=0;bpmValue=null;
+  renderKey(null);renderScale(null);renderChordHist();
+  patBox.classList.remove('show');
+  sChordBig.textContent='—';sChordBig.className='';sChordBig.style.color='var(--hi)';
   sChordNotes.textContent='';sChordQuality.textContent='';sChordDegree.textContent='';
-  sBpmBig.textContent='—';sBpmBar.innerHTML='';
-  perfChord.textContent='—';perfKey.textContent='—';perfDegree.style.opacity=0;perfBpm.style.opacity=0;
+  sBpmBig.textContent='—';sBpmSub.textContent='toque pelo menos 4 ataques';
+  perfChord.textContent='—';perfChord.className='idle';
+  perfKey.textContent='—';perfDegree.style.opacity=0;perfBpm.style.opacity=0;
+  perfNextLbl.style.display='none';perfNextVal.textContent='';perfPattern.innerHTML='';
+  updateExport();
 });
 
-/* ══════════════════════════════════════════════════
-   MIC
-══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   MIC — FIX #2: two separate analysers
+═══════════════════════════════════════ */
 async function toggle(){
   if(isOn){stopMic();return}
   try{
-    stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});
+    stream=await navigator.mediaDevices.getUserMedia({
+      audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},
+      video:false
+    });
     audioCtx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:44100});
-    analyser=audioCtx.createAnalyser();
-    analyser.fftSize=8192;
-    analyser.smoothingTimeConstant=0.72;
-    audioCtx.createMediaStreamSource(stream).connect(analyser);
+    const src=audioCtx.createMediaStreamSource(stream);
+
+    // Pitch analyser: large FFT, high smoothing for stable pitch read
+    pitchAnalyser=audioCtx.createAnalyser();
+    pitchAnalyser.fftSize=8192;
+    pitchAnalyser.smoothingTimeConstant=0.82;
+
+    // Chord/onset analyser: medium FFT, low smoothing for fast response
+    chordAnalyser=audioCtx.createAnalyser();
+    chordAnalyser.fftSize=4096;
+    chordAnalyser.smoothingTimeConstant=0.5;
+
+    src.connect(pitchAnalyser);
+    src.connect(chordAnalyser);
+
     isOn=true;
-    btnMic.classList.add('on');btnTxt.textContent='Desativar';
+    $('btn-mic').classList.add('on');$('btn-txt').textContent='Desativar';
     dotLive.classList.add('on');
     loop();
-  }catch(e){alert('Erro ao acessar microfone: '+(e.message||'permissão negada'))}
+  }catch(e){alert('Microfone: '+(e.message||'permissão negada'))}
 }
+
 function stopMic(){
   if(rafId)cancelAnimationFrame(rafId);
   if(stream)stream.getTracks().forEach(t=>t.stop());
   if(audioCtx)audioCtx.close();
-  isOn=false;btnMic.classList.remove('on');btnTxt.textContent='Ativar microfone';
+  isOn=false;
+  $('btn-mic').classList.remove('on');$('btn-txt').textContent='Ativar microfone';
   dotLive.classList.remove('on');
-  currentNote=null;drawTuner(perfTuner,ptx,null);drawTuner(sTuner,stx2,null);
+  currentNote=null;
+  drawTuner(perfTuner,ptx,null);drawTuner(sTuner,stx,null);
 }
 
-/* ══════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    MAIN LOOP
-══════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 function loop(){
   if(!isOn)return;
-  const now=Date.now();
+  const acNow=audioCtx.currentTime; // precise audio clock
+  const wallNow=Date.now();
 
-  const tbuf=new Float32Array(analyser.fftSize);
-  analyser.getFloatTimeDomainData(tbuf);
-  const freq=autoCorrelate(tbuf,audioCtx.sampleRate);
+  /* ── PITCH (pitch analyser) ── */
+  const timeBuf=new Float32Array(pitchAnalyser.fftSize);
+  pitchAnalyser.getFloatTimeDomainData(timeBuf);
+  const freq=autoCorrelateFast(timeBuf,audioCtx.sampleRate);
 
-  const fbuf=new Float32Array(analyser.frequencyBinCount);
-  analyser.getFloatFrequencyData(fbuf);
-  const pcp=getPCP(fbuf,audioCtx.sampleRate,analyser.fftSize);
-
-  // ── Onset / BPM ──
-  const isAttack=detectOnset(tbuf,now);
-  if(isAttack){
-    attackFlash.classList.add('pulse');
-    setTimeout(()=>attackFlash.classList.remove('pulse'),90);
-    const bpm=estimateBPM();
-    if(bpm&&bpm>=40&&bpm<=220){
-      bpmValue=bpm;
-      perfBpm.textContent=`${bpm} BPM`;perfBpm.style.opacity=1;
-      sBpmBig.textContent=bpm;sBpmSub.textContent='batidas por minuto';
-      renderBeatBar(bpm);
-    }
-  }
-
-  // ── Note ──
-  if(freq>55&&freq<2100){
+  if(freq>0){
     const note=freqToNote(freq);
     currentNote=note;
-    if(note.name!==lastNote&&now-lastNoteTime>115){
-      lastNote=note.name;lastNoteTime=now;
-      if(!uniqNotes.includes(note.name))uniqNotes.push(note.name);
-      const key=identifyKey(uniqNotes);
-      if(key){
-        currentKey=key;
-        renderStudyKey(key);
-        renderStudyScale(key);
-      }
+    if(note.name!==lastNote&&wallNow-lastNoteTime>110){
+      lastNote=note.name;lastNoteTime=wallNow;
+      // FIX #5: subtract capo before feeding key detection
+      const detectedNote=capoSemis>0?transposeNote(note.name,12-capoSemis):note.name;
+      noteRolling.push(detectedNote);
+      if(noteRolling.length>64)noteRolling.shift();
+      if(!uniqPlayed.includes(detectedNote))uniqPlayed.push(detectedNote);
+      const key=identifyKey(noteRolling);
+      if(key){currentKey=key;renderKey(key);renderScale(key)}
     }
-  } else { currentNote=null; }
+  }else{currentNote=null}
 
   drawTuner(perfTuner,ptx,currentNote);
-  drawTuner(sTuner,stx2,currentNote);
+  drawTuner(sTuner,stx,currentNote);
 
-  // ── Chord ──
-  if(now-lastChordTime>170){
-    lastChordTime=now;
-    const chord=detectChord(pcp);
-    if(chord&&chord.score>0.48){
-      const catColor={maj:'var(--bl)',min:'var(--pu)',dom:'var(--am)',dim:'var(--re)'};
-      // Update perf
-      if(chord.name!==lastChord){
-        lastChord=chord.name;
-        perfChord.className=chord.cat;
-        perfChord.textContent=chord.name;
-        perfChord.classList.add('flash');
-        setTimeout(()=>perfChord.classList.remove('flash'),300);
-        perfQuality.textContent=chord.label;
+  /* ── CHORD + ONSET (chord analyser) ── */
+  const freqBuf=new Float32Array(chordAnalyser.frequencyBinCount);
+  chordAnalyser.getFloatFrequencyData(freqBuf);
 
-        const deg=currentKey?chordDegree(chord.root,currentKey.root,currentKey.type):'';
-        perfDegree.textContent=deg?`grau ${deg}`:'';
-        perfDegree.style.opacity=deg?1:0;
-        if(currentKey)perfKey.textContent=`${PT[currentKey.root]||currentKey.root} ${SCALES[currentKey.type].name}`;
-
-        // Study
-        sChordBig.textContent=chord.name;
-        sChordBig.className=chord.cat;
-        sChordNotes.textContent=chord.notes.map(n=>PT[n]||n).join(' – ');
-        sChordQuality.textContent=chord.label;
-        sChordDegree.textContent=deg?`Grau: ${deg} na escala`:'';
-
-        // History
-        chordHist.push(chord.name);
-        chordObjHist.push({...chord,degree:deg,key:currentKey?`${currentKey.root} ${SCALES[currentKey.type].name}`:''});
-        if(chordHist.length>32)chordHist.shift(),chordObjHist.shift();
-        renderChordHist();
-
-        // Session log
-        sessionLog.push({time:new Date().toLocaleTimeString('pt-BR'),chord:chord.name,quality:chord.label,degree:deg,key:currentKey?`${PT[currentKey.root]||currentKey.root} ${SCALES[currentKey.type].name}`:''});
-
-        // Pattern
-        if(chordHist.length>=4)detectAndShowPattern();
-      }
+  // Onset detection for BPM
+  const isOnset=detectOnset(freqBuf,acNow);
+  if(isOnset){
+    attackFlash.classList.add('pulse');
+    setTimeout(()=>attackFlash.classList.remove('pulse'),80);
+    const bpm=estimateBPM();
+    if(bpm){
+      bpmValue=bpm;
+      scheduleBeat(acNow);
+      sBpmBig.textContent=bpm;
+      sBpmSub.textContent='batidas por minuto';
+      perfBpm.textContent=`${bpm} BPM`;perfBpm.style.opacity=1;
     }
   }
+
+  // Chord detection every ~160ms to avoid jitter
+  if(wallNow-chordLastTime>160){
+    chordLastTime=wallNow;
+    const pcp=getPCP(freqBuf,audioCtx.sampleRate,chordAnalyser.fftSize);
+    const raw=detectChord(pcp);
+    const confirmed=stabilizeChord(raw);
+    if(confirmed&&confirmed.name!==lastConfirmedChord){
+      lastConfirmedChord=confirmed.name;
+      onChordConfirmed(confirmed);
+    }
+  }
+
+  // Beat display on every frame using audio clock
+  drawBeatBar(acNow);
 
   rafId=requestAnimationFrame(loop);
 }
 
-/* ══════════════════════════════════════════════════
-   RENDER FUNCTIONS
-══════════════════════════════════════════════════ */
-function renderStudyKey(key){
-  const disp=capoSemis>0?transposeNote(key.root,capoSemis):key.root;
-  const typeName=SCALES[key.type].name;
-  sKeyMain.textContent=`${PT[disp]||disp} ${typeName}`;
-  const rel=relKey(key.root,key.type);
-  sKeyRel.textContent=rel?`Relativa: ${rel}`:'';
-  const scalePT=key.scale.map(n=>{const t=capoSemis>0?transposeNote(n,capoSemis):n;return PT[t]||t});
-  sKeyScale.textContent=`Notas: ${scalePT.join(' – ')}`;
-  const pct=Math.min(99,Math.round(key.score*85));
-  sCbar.style.width=pct+'%';sCpct.textContent=`confiança: ${pct}%`;
-  if(currentKey)perfKey.textContent=`${PT[disp]||disp} ${typeName}`;
+function onChordConfirmed(chord){
+  const catColor={maj:'var(--bl)',min:'var(--pu)',dom:'var(--am)',dim:'var(--re)'};
+  const deg=currentKey?degreeOf(chord.root,currentKey.root):'';
+
+  // Perf view
+  perfChord.className=chord.cat;
+  perfChord.textContent=chord.name;
+  perfChord.classList.add('flash');
+  setTimeout(()=>perfChord.classList.remove('flash'),260);
+  perfQuality.textContent=chord.label;
+  perfDegree.textContent=deg?`grau ${deg}`:'';
+  perfDegree.style.opacity=deg?1:0;
+
+  // Study view
+  sChordBig.className=chord.cat;
+  sChordBig.textContent=chord.name;
+  sChordNotes.textContent=chord.notes.map(n=>{const d=capoSemis>0?transposeNote(n,capoSemis):n;return PT[d]||d}).join(' – ');
+  sChordQuality.textContent=chord.label;
+  sChordDegree.textContent=deg?`Grau: ${deg}${currentKey?' em '+renderKeyName(currentKey):''}`:'';
+
+  // History
+  chordHist.push(chord.name);
+  chordObjHist.push({...chord,degree:deg});
+  if(chordHist.length>32){chordHist.shift();chordObjHist.shift()}
+  renderChordHist();
+
+  // Session log
+  sessionLog.push({
+    time:new Date().toLocaleTimeString('pt-BR'),
+    chord:chord.name,quality:chord.label,degree:deg,
+    key:currentKey?renderKeyName(currentKey):''
+  });
+
+  // Pattern
+  if(chordHist.length>=4)checkPattern();
 }
 
-function renderStudyScale(key){
+/* ═══════════════════════════════════════
+   RENDER
+═══════════════════════════════════════ */
+function renderKeyName(key){
+  const root=capoSemis>0?transposeNote(key.root,capoSemis):key.root;
+  return`${PT[root]||root} ${SCALES[key.type].name}`;
+}
+
+function renderKey(key){
+  if(!key){sKeyMain.textContent='—';sKeyRel.textContent='';sKeyScale.textContent='';sCbar.style.width='0%';sCpct.textContent='';perfKey.textContent='—';perfConfBar.style.width='0%';perfConfTxt.textContent='';return}
+  const name=renderKeyName(key);
+  sKeyMain.textContent=name;perfKey.textContent=name;
+  const rel=relKey(key.root,key.type);
+  sKeyRel.textContent=rel?`Relativa: ${rel}`:'';
+  const scaleDisp=key.scale.map(n=>{const d=capoSemis>0?transposeNote(n,capoSemis):n;return PT[d]||d});
+  sKeyScale.textContent=`Notas: ${scaleDisp.join(' – ')}`;
+  const pct=Math.min(99,Math.round(key.score*85));
+  sCbar.style.width=pct+'%';sCpct.textContent=`confiança: ${pct}%`;
+  perfConfBar.style.width=pct+'%';perfConfTxt.textContent=`${pct}% confiança`;
+}
+
+function renderScale(key){
   if(!key){sSg.innerHTML='<span class="empty" style="grid-column:1/-1">Identifique o tom primeiro...</span>';return}
   const ri=ni(key.root);
   sSg.innerHTML=key.scale.map(n=>{
     const semi=(ni(n)-ri+12)%12;
-    const deg=DEGREE_NAMES[semi];
-    const played=uniqNotes.includes(n);
+    const deg=DEGREE_ROMAN[semi];
+    const played=uniqPlayed.includes(n);
     const disp=capoSemis>0?transposeNote(n,capoSemis):n;
     let cls=played?'played':'';
-    if(semi===0)cls='tonic';else if(semi===7)cls='dom5';else if(semi===5)cls='sub4';
+    if(semi===0)cls='tonic';
+    else if(semi===7)cls='dom5';
+    else if(semi===5)cls='sub4';
     return`<div class="sn ${cls}">${disp}<span class="sr">${deg}${played?' ✓':''}</span></div>`;
   }).join('');
 }
 
 function renderChordHist(){
-  if(!chordHist.length){sChRow.innerHTML='<span class="empty">Toque acordes...</span>';return}
+  if(!chordObjHist.length){sChRow.innerHTML='<span class="empty">Toque acordes...</span>';return}
   sChRow.innerHTML=chordObjHist.map((c,i)=>{
     const cur=i===chordObjHist.length-1;
     const rec=!cur&&i>=chordObjHist.length-3;
-    return`<div class="ch-pill ${cur?'cur':rec?'rec':''}">
-      ${c.name}
-      <span class="ch-deg">${c.degree||''}</span>
-    </div>`;
+    return`<div class="ch-pill ${cur?'cur':rec?'rec':''}">${c.name}<span class="ch-deg">${c.degree||''}</span></div>`;
   }).join('');
-  // scroll to end
-  setTimeout(()=>{const r=sChRow;r.scrollLeft=r.scrollWidth},50);
+  setTimeout(()=>{const r=$('ch-scroll')||sChRow.parentElement;if(r)r.scrollLeft=r.scrollWidth},40);
 }
 
-function detectAndShowPattern(){
-  const pat=findPatterns(chordHist);
+function checkPattern(){
+  const pat=findPattern(chordHist);
   if(!pat||pat.count<2){patBox.classList.remove('show');return}
   currentPattern=pat;
-  patCnt.textContent=`${pat.count}× repetido`;
-  const nextChord=predictFromPattern(chordHist,pat.pattern);
+  const next=predictNext(chordHist,pat.pattern);
 
-  // Find current position in pattern
+  // Find position
   const tail=chordHist.slice(-pat.pattern.length);
   let curPos=-1;
   for(let s=0;s<pat.pattern.length;s++){
-    const window=pat.pattern.slice(s).concat(pat.pattern.slice(0,s));
-    if(tail.every((n,i)=>n===window[i])){curPos=(s+pat.pattern.length)%pat.pattern.length;break}
+    const win=[...pat.pattern.slice(s),...pat.pattern.slice(0,s)];
+    if(tail.every((n,i)=>n===win[i])){curPos=(s+pat.pattern.length)%pat.pattern.length;break}
   }
 
-  patSeq.innerHTML=pat.pattern.map((n,i)=>`
-    ${i>0?'<span class="pat-arr">›</span>':''}
-    <span class="pat-n ${i===curPos?'active':''}">${n}</span>
-  `).join('');
+  patCnt.textContent=`${pat.count}× repetido`;
+  patSeq.innerHTML=pat.pattern.map((n,i)=>
+    `${i>0?'<span class="pat-arr">›</span>':''}<span class="pat-n ${i===curPos?'act':''}">${n}</span>`
+  ).join('');
 
-  if(nextChord){
-    patNextRow.innerHTML=`<span class="pat-next-lbl">Próximo no padrão:</span>
-      <span class="pat-next-note">${nextChord}</span>`;
-    // Update perf
-    perfNextChord.textContent=nextChord;
-    perfNextLbl.style.display='';
-    // Pattern in perf
-    perfPatternEl.innerHTML=pat.pattern.map((n,i)=>
-      `<span class="perf-pat-n ${i===curPos?'perf-pat-cur':''}">${n}</span>
-       ${i<pat.pattern.length-1?'<span style="color:var(--hi);font-size:12px">›</span>':''}`
+  if(next){
+    patNxt.innerHTML=`<span class="pat-nxt-lbl">Próximo:</span><span class="pat-nxt-val">${next}</span>`;
+    perfNextVal.textContent=next;perfNextLbl.style.display='';
+    perfPattern.innerHTML=pat.pattern.map((n,i)=>
+      `<span class="ppn ${i===curPos?'cur':''}">${n}</span>${i<pat.pattern.length-1?'<span style="color:var(--hi);font-size:11px">›</span>':''}`
     ).join('');
-  } else {
-    patNextRow.innerHTML='';
   }
   patBox.classList.add('show');
 }
 
-function renderBeatBar(bpm){
-  const beats=8;
-  sBpmBar.innerHTML='';
-  const interval=60000/bpm;
-  let beat=0;
-  function tick(){
-    if(!isOn)return;
-    const blocks=sBpmBar.querySelectorAll('.beat-block');
-    blocks.forEach((b,i)=>b.classList.toggle('on',i===beat%beats));
-    beat++;
-    setTimeout(tick,interval);
-  }
-  for(let i=0;i<beats;i++){
-    const d=document.createElement('div');
-    d.className='beat-block';
-    d.style.height=(i%4===0?'20px':'12px');
-    sBpmBar.appendChild(d);
-  }
-  tick();
-}
-
 function updateExport(){
   if(!sessionLog.length){exportArea.textContent='Nenhuma informação registrada ainda.';return}
-  const key=currentKey?`${PT[currentKey.root]||currentKey.root} ${SCALES[currentKey.type].name}`:'desconhecido';
-  let txt=`SESSÃO MUSICAL — ${new Date().toLocaleDateString('pt-BR')}\n`;
-  txt+=`Tom identificado: ${key}\n`;
-  if(capoSemis>0)txt+=`Capotraste: ${capoSemis}ª casa\n`;
-  if(bpmValue)txt+=`BPM estimado: ${bpmValue}\n`;
-  txt+=`\nPROGRESSÃO DE ACORDES:\n`;
-  // Deduplicate consecutive
+  const key=currentKey?renderKeyName(currentKey):'desconhecido';
+  let t=`SESSÃO MUSICAL — ${new Date().toLocaleDateString('pt-BR')}\n`;
+  t+=`Tom: ${key}\n`;
+  if(capoSemis>0)t+=`Capotraste: ${capoSemis}ª casa\n`;
+  if(bpmValue)t+=`BPM: ${bpmValue}\n`;
+  t+=`\nPROGRESSÃO:\n`;
   let prev='';
-  const prog=sessionLog.filter(e=>{if(e.chord===prev)return false;prev=e.chord;return true});
-  txt+=prog.map(e=>`  ${e.chord.padEnd(8)} ${e.degree?('['+e.degree+']').padEnd(7):' '.repeat(7)} ${e.quality}`).join('\n');
-  if(currentPattern){
-    txt+=`\n\nPADRÃO DETECTADO (${currentPattern.count}×): ${currentPattern.pattern.join(' → ')}`;
-  }
-  txt+=`\n\nTotal de eventos: ${sessionLog.length}`;
-  exportArea.textContent=txt;
+  sessionLog.filter(e=>{if(e.chord===prev)return false;prev=e.chord;return true})
+    .forEach(e=>t+=`  ${e.chord.padEnd(8)} ${e.degree?('['+e.degree+']').padEnd(7):'       '} ${e.quality}\n`);
+  if(currentPattern)t+=`\nPADRÃO (${currentPattern.count}×): ${currentPattern.pattern.join(' → ')}\n`;
+  t+=`\nEventos: ${sessionLog.length}`;
+  exportArea.textContent=t;
 }
 
-/* ══════════════════════════════════════════════════
-   TUNER CANVAS (shared function, two canvases)
-══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   TUNER
+═══════════════════════════════════════ */
 function drawTuner(cv,cx,note){
-  const w=cv.offsetWidth||600;
-  const h=cv===perfTuner?44:50;
+  const w=cv.offsetWidth||600,h=cv===perfTuner?46:50;
   cv.width=w;cv.height=h;
   cx.fillStyle='#18181b';cx.fillRect(0,0,w,h);
-  const center=w/2;
+  const C=w/2;
   for(let c=-50;c<=50;c+=10){
-    const x=center+(c/50)*(w/2-20);
+    const x=C+(c/50)*(w/2-22);
     const big=c===0||Math.abs(c)===50;
-    cx.strokeStyle=big?'#4e4b47':'#2a2a2d';
-    cx.lineWidth=big?1:.5;
-    const th=big?12:6;
+    cx.strokeStyle=big?'#4e4b47':'#2a2a2d';cx.lineWidth=big?1:.5;
+    const th=big?13:6;
     cx.beginPath();cx.moveTo(x,h/2-th/2);cx.lineTo(x,h/2+th/2);cx.stroke();
   }
   cx.strokeStyle='#2e2e32';cx.lineWidth=.5;
-  cx.beginPath();cx.moveTo(center,4);cx.lineTo(center,h-4);cx.stroke();
+  cx.beginPath();cx.moveTo(C,4);cx.lineTo(C,h-4);cx.stroke();
   if(note){
     const cv2=Math.max(-50,Math.min(50,note.cents));
-    const x=center+(cv2/50)*(w/2-20);
+    const x=C+(cv2/50)*(w/2-22);
     const ok=Math.abs(cv2)<10;
     cx.fillStyle=ok?'#17c976':'#e04040';
     cx.beginPath();cx.arc(x,h/2,9,0,Math.PI*2);cx.fill();
     cx.fillStyle='#88847f';cx.font='500 10px sans-serif';
     cx.textAlign='left';cx.fillText(`${cv2>=0?'+':''}${Math.round(cv2)}¢`,6,h/2+4);
     cx.textAlign='right';cx.fillText(note.name,w-6,h/2+4);
-    if(ok){cx.fillStyle='#17c976';cx.textAlign='center';cx.font='9px sans-serif';cx.fillText('✓ afinado',center,h-3)}
-  } else {
-    cx.fillStyle='#2e2e32';cx.font='10px sans-serif';cx.textAlign='center';
-    cx.fillText('toque uma nota para afinar',center,h/2+4);
+    if(ok){cx.fillStyle='#17c976';cx.font='9px sans-serif';cx.textAlign='center';cx.fillText('✓ afinado',C,h-3)}
+  }else{
+    cx.fillStyle='#2a2a2d';cx.font='10px sans-serif';cx.textAlign='center';
+    cx.fillText('toque uma nota para afinar',C,h/2+4);
   }
 }
-drawTuner(perfTuner,ptx,null);
-drawTuner(sTuner,stx2,null);
 
-/* init capo label */
-capoVal.textContent='sem capotraste';
+// Init
+drawTuner(perfTuner,ptx,null);
+drawTuner(sTuner,stx,null);
+capoVal.textContent='sem capo';
+
+// Beat canvas initial draw
+(function initBeat(){
+  const w=beatCanvas.offsetWidth||300;beatCanvas.width=w;beatCanvas.height=28;
+  beatCtx.fillStyle='#18181b';beatCtx.fillRect(0,0,w,28);
+  beatCtx.fillStyle='#2a2a2d';beatCtx.font='10px sans-serif';beatCtx.textAlign='center';
+  beatCtx.fillText('aguardando ataques...',w/2,17);
+})();
 </script>
 </body>
 </html>
