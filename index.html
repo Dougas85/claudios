@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detector Musical</title>
+<title>Detector Musical + Biblioteca</title>
 <style>
 :root{
   --bg:#09090a;--s1:#111113;--s2:#18181b;--s3:#222226;--s4:#2c2c31;
@@ -22,7 +22,7 @@ html,body{height:100%}
 body{background:var(--bg);color:var(--tx);font-family:var(--font);overflow:hidden;height:100vh;display:flex;flex-direction:column}
 
 /* ── TOP BAR ── */
-#topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--s1);border-bottom:1px solid var(--b1);flex-shrink:0}
+#topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--s1);border-bottom:1px solid var(--b1);flex-shrink:0;flex-wrap:wrap}
 #topbar h1{font-size:14px;font-weight:600;letter-spacing:-.2px;margin-right:4px}
 .tb-sep{width:1px;height:18px;background:var(--b2);flex-shrink:0}
 .tb-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;background:var(--s2);border:1px solid var(--b1);color:var(--mu);cursor:pointer;transition:all .15s;white-space:nowrap}
@@ -32,6 +32,8 @@ body{background:var(--bg);color:var(--tx);font-family:var(--font);overflow:hidde
 #btn-mic.on{background:var(--reb);color:var(--re);border-color:rgba(224,64,64,.5)}
 #mode-perf.act{background:var(--pub);color:var(--pu);border-color:var(--pu2)}
 #mode-study.act{background:var(--blb);color:var(--bl);border-color:var(--bl2)}
+#mode-lib.act{background:var(--grb);color:var(--gr);border-color:var(--gr2)}
+.tb-pill.act{background:var(--s3);color:var(--tx);border-color:var(--b2)}
 .dot-live{width:6px;height:6px;border-radius:50%;background:var(--hi);flex-shrink:0;transition:background .3s}
 .dot-live.on{background:var(--re);animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
@@ -69,6 +71,8 @@ body{background:var(--bg);color:var(--tx);font-family:var(--font);overflow:hidde
 #perf-conf{font-size:11px;color:var(--hi);display:flex;align-items:center;gap:6px}
 .conf-mini{height:3px;width:60px;background:var(--s3);border-radius:2px;overflow:hidden}
 .conf-mini-bar{height:100%;background:var(--gr);border-radius:2px;transition:width .5s}
+#perf-noise-ind{font-size:11px;color:var(--am);min-height:14px;opacity:0;transition:opacity .2s}
+#perf-noise-ind.show{opacity:1}
 
 /* ══ STUDY VIEW ══ */
 #study-view{display:none;height:100%;overflow-y:auto;padding:12px 14px 36px;flex-direction:column;gap:9px}
@@ -151,6 +155,67 @@ input[type=range]{flex:1;accent-color:var(--gr)}
 #stab-wrap{display:flex;align-items:center;gap:5px;margin-top:6px}
 .stab-dot{width:6px;height:6px;border-radius:50%;background:var(--s3);transition:background .15s}
 .stab-dot.on{background:var(--gr)}
+
+/* ══ LIBRARY VIEW ══ */
+#lib-view{display:none;height:100%;overflow:hidden;flex-direction:column}
+#lib-view.active{display:flex}
+
+#lib-list-screen{display:none;flex-direction:column;gap:10px;height:100%;overflow-y:auto;padding:12px 14px 36px}
+#lib-list-screen.active{display:flex}
+.lib-list{display:flex;flex-direction:column;gap:8px}
+.lib-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.lib-card:hover{border-color:var(--b2)}
+.lib-card-info{flex:1;min-width:140px}
+.lib-card-title{font-size:14px;font-weight:600}
+.lib-card-sub{font-size:11px;color:var(--mu);margin-top:2px}
+.lib-card-actions{display:flex;gap:6px}
+.icon-btn{background:var(--s2);border:1px solid var(--b1);color:var(--mu);border-radius:7px;padding:6px 9px;font-size:11px;cursor:pointer;transition:all .15s;font-weight:600}
+.icon-btn:hover{color:var(--tx);border-color:var(--b2)}
+.icon-btn.danger:hover{color:var(--re);border-color:rgba(224,64,64,.4)}
+.icon-btn.primary{background:var(--grb);color:var(--gr);border-color:var(--gr2)}
+
+#lib-editor{display:none;flex-direction:column;gap:10px;height:100%;overflow-y:auto;padding:12px 14px 36px}
+#lib-editor.active{display:flex}
+#lib-editor input,#lib-editor textarea{
+  width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:8px;color:var(--tx);
+  font-family:var(--font);font-size:13px;padding:9px 11px;
+}
+#lib-editor textarea{font-family:monospace;font-size:12px;min-height:280px;resize:vertical;line-height:1.6}
+.field-row{display:flex;gap:8px;flex-wrap:wrap}
+.field-row > *{flex:1;min-width:90px}
+.field-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--hi);margin-bottom:5px;display:block}
+.field-hint{font-size:10px;color:var(--hi);line-height:1.6}
+
+#lib-player{display:none;flex-direction:column;height:100%}
+#lib-player.active{display:flex}
+.player-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--b1);flex-shrink:0;flex-wrap:wrap}
+.player-head h2{font-size:14px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:60px}
+.player-tabs{display:flex;gap:6px}
+.player-body{flex:1;overflow-y:auto;padding:16px}
+
+/* Dynamic projector view */
+#dyn-view{display:none;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:18px;text-align:center;padding:20px}
+#dyn-view.active{display:flex}
+#dyn-block{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--hi);min-height:14px}
+#dyn-chord{font-size:clamp(60px,16vw,130px);font-weight:700;color:var(--gr);line-height:1;letter-spacing:-3px}
+#dyn-line{font-size:clamp(20px,5vw,40px);font-weight:600;line-height:1.4;max-width:90%}
+#dyn-line .hl{color:var(--gr);font-size:.6em;vertical-align:middle}
+#dyn-next{font-size:clamp(13px,2.2vw,18px);color:var(--mu);min-height:18px}
+#dyn-next b{color:var(--am)}
+.dyn-controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+#dyn-mic-status{font-size:12px;color:var(--mu);display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+#dyn-mic-status.live{color:var(--gr)}
+#dyn-mic-status .icon-btn{padding:4px 10px;font-size:11px}
+
+/* Cifra view */
+#cifra-view{display:none;flex-direction:column;gap:2px;font-size:14px;line-height:1.9;font-family:monospace}
+#cifra-view.active{display:flex}
+.cf-block-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--te);margin:14px 0 4px}
+.cf-line{white-space:pre-wrap;padding:2px 6px;border-radius:4px}
+.cf-line.cur{background:rgba(23,201,118,.12)}
+.cf-instr{display:flex;gap:6px;flex-wrap:wrap;margin:4px 6px;padding:4px 0;border-radius:4px}
+.cf-instr.cur{background:rgba(23,201,118,.12)}
+.cf-chord{color:var(--am);font-weight:700;font-family:var(--font)}
 </style>
 </head>
 <body>
@@ -165,6 +230,10 @@ input[type=range]{flex:1;accent-color:var(--gr)}
   <button class="tb-pill" id="mode-study">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
     Estudo
+  </button>
+  <button class="tb-pill" id="mode-lib">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    Músicas
   </button>
   <div class="tb-sep"></div>
   <div class="dot-live" id="dot-live"></div>
@@ -188,6 +257,7 @@ input[type=range]{flex:1;accent-color:var(--gr)}
       <div class="conf-mini"><div class="conf-mini-bar" id="perf-conf-bar" style="width:0%"></div></div>
       <span id="perf-conf-txt"></span>
     </div>
+    <div id="perf-noise-ind">🔇 som não-harmônico ignorado</div>
     <div id="perf-next-wrap">
       <span id="perf-next-lbl" style="display:none">próximo →</span>
       <span id="perf-next-val"></span>
@@ -273,6 +343,83 @@ input[type=range]{flex:1;accent-color:var(--gr)}
       <div id="export-area">Toque acordes para registrar...</div>
     </div>
   </div>
+
+  <!-- LIBRARY -->
+  <div id="lib-view">
+    <div id="lib-list-screen" class="active">
+      <div class="exp-row">
+        <button class="icon-btn primary" id="lib-add">+ Nova música</button>
+      </div>
+      <div class="lib-list" id="lib-list"></div>
+    </div>
+
+    <div id="lib-editor">
+      <div class="lbl">Editar música</div>
+      <input type="hidden" id="ed-id">
+      <div class="field-row">
+        <div>
+          <span class="field-lbl">Título</span>
+          <input id="ed-title" placeholder="Ex: É Tudo Sobre Você">
+        </div>
+        <div>
+          <span class="field-lbl">Artista</span>
+          <input id="ed-artist" placeholder="Ex: Morada">
+        </div>
+      </div>
+      <div class="field-row">
+        <div>
+          <span class="field-lbl">Tom</span>
+          <input id="ed-tom" placeholder="Ex: Am">
+        </div>
+        <div>
+          <span class="field-lbl">Capotraste</span>
+          <input id="ed-capo" type="number" min="0" max="11" value="0">
+        </div>
+      </div>
+      <div>
+        <span class="field-lbl">Cifra (formato Cifra Club)</span>
+        <textarea id="ed-raw" placeholder="[Refrão]
+Am              C
+   Letra da música aqui
+G               Em
+   Outra linha da letra"></textarea>
+        <div class="field-hint">
+          Cole a cifra com os acordes em uma linha acima da letra, e seções entre [colchetes].
+          Diagramas de tablatura (linhas com "|") são ignorados automaticamente.
+        </div>
+      </div>
+      <div class="exp-row">
+        <button class="icon-btn primary" id="lib-save">Salvar</button>
+        <button class="icon-btn" id="lib-cancel">Cancelar</button>
+      </div>
+    </div>
+
+    <div id="lib-player">
+      <div class="player-head">
+        <button class="icon-btn" id="player-back">← Voltar</button>
+        <h2 id="player-title">—</h2>
+        <div class="player-tabs">
+          <button class="tb-pill act" id="tab-cifra">Cifra</button>
+          <button class="tb-pill" id="tab-dyn">Dinâmico</button>
+        </div>
+      </div>
+      <div class="player-body">
+        <div id="cifra-view" class="active"></div>
+        <div id="dyn-view">
+          <div id="dyn-mic-status"></div>
+          <div id="dyn-block"></div>
+          <div id="dyn-chord">—</div>
+          <div id="dyn-line">Toque a música para começar o acompanhamento</div>
+          <div id="dyn-next"></div>
+          <div class="dyn-controls">
+            <button class="icon-btn" id="dyn-prev">‹ Anterior</button>
+            <button class="icon-btn" id="dyn-restart">Reiniciar</button>
+            <button class="icon-btn" id="dyn-next-btn">Próximo ›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id="attack-flash"></div>
@@ -326,11 +473,9 @@ const degreeOf=(chordRoot,keyRoot)=>{
 const transposeNote=(note,semis)=>NOTES[(ni(note)+semis+120)%12];
 
 /* ── Key identification with sliding window ── */
-// FIX #6: noteWindow decays — only last N unique notes used
 const NOTE_WINDOW=16; // rolling unique notes
 function identifyKey(noteWindow){
   if(noteWindow.length<2)return null;
-  // Use last NOTE_WINDOW unique notes only
   const played=[...new Set(noteWindow.slice(-NOTE_WINDOW))];
   let best=null,bs=-1;
   for(const root of NOTES){
@@ -354,7 +499,6 @@ function identifyKey(noteWindow){
 }
 
 /* ── Chord detection with stability buffer ── */
-// FIX #3: require 3 consecutive agreeing frames before confirming chord
 const CHORD_STABILITY=3;
 let chordCandidateName='',chordCandidateCount=0,chordCandidateObj=null;
 
@@ -382,8 +526,11 @@ function detectChord(pcp){
 }
 
 function stabilizeChord(candidate){
-  // Returns confirmed chord only after CHORD_STABILITY consecutive matches
-  if(!candidate){chordCandidateCount=0;return null}
+  if(!candidate){chordCandidateCount=0;chordCandidateName='';
+    [sd0,sd1,sd2].forEach(d=>d.classList.remove('on'));
+    stabLbl.textContent='aguardando...';
+    return null;
+  }
   if(candidate.name===chordCandidateName){
     chordCandidateCount++;
     chordCandidateObj=candidate;
@@ -392,7 +539,6 @@ function stabilizeChord(candidate){
     chordCandidateCount=1;
     chordCandidateObj=candidate;
   }
-  // Update stability dots
   const dots=[sd0,sd1,sd2];
   dots.forEach((d,i)=>d.classList.toggle('on',i<chordCandidateCount));
   stabLbl.textContent=chordCandidateCount>=CHORD_STABILITY?'confirmado':'aguardando...';
@@ -401,7 +547,7 @@ function stabilizeChord(candidate){
 
 /* ═══════════════════════════════════════
    PITCH DETECTION — FFT-based autocorrelation (O(N log N))
-   Uses two passes of FFT to compute autocorrelation efficiently
+   with harmonicity ("clarity") gate to reject percussive/noise transients
 ═══════════════════════════════════════ */
 function freqToNote(f){
   const n=12*Math.log2(f/440)+69;
@@ -409,43 +555,45 @@ function freqToNote(f){
   return{name:NOTES[((midi%12)+12)%12],midi,cents:(n-midi)*100,octave:Math.floor(midi/12)-1};
 }
 
-// FIX #1: Use FFT-based autocorrelation — O(N log N) instead of O(N²)
-// We compute correlation via: IFFT(|FFT(x)|²)
+// AUDIO FIX #1 — pitch clarity gate.
+// clarity = autocorrelation peak / autocorrelation at lag 0 (total energy).
+// Periodic sounds (strings, voice, wind) -> clarity close to 1.
+// Non-periodic transients (table taps, claps, footsteps) -> clarity low.
+const PITCH_CLARITY_THRESH=0.32;
+
 function autoCorrelateFast(buf,sr){
   const N=buf.length;
-  // RMS gate
   let rms=0;for(let i=0;i<N;i++)rms+=buf[i]*buf[i];
-  rms=Math.sqrt(rms/N);if(rms<0.008)return-1;
+  rms=Math.sqrt(rms/N);if(rms<0.008)return null;
 
-  // Zero-pad to 2N for circular correlation avoidance
   const M=nextPow2(N*2);
-  // FFT real input — we implement a simple DIT FFT
   const re=new Float32Array(M);
   const im=new Float32Array(M);
   for(let i=0;i<N;i++)re[i]=buf[i];
   fft(re,im,false);
-  // Power spectrum: |X|²
   for(let i=0;i<M;i++){re[i]=re[i]*re[i]+im[i]*im[i];im[i]=0}
-  // IFFT
   fft(re,im,true);
-  // re[] now holds the autocorrelation
+  // re[] now holds the autocorrelation; re[0] = total energy (lag 0)
+  const zeroLag=re[0]||1e-9;
 
-  // Find first valley (d)
   let d=0;while(d<M/2-1&&re[d]>re[d+1])d++;
-  // Find peak after valley — only look in pitch range 60Hz–1200Hz
   const minLag=Math.floor(sr/1200);
   const maxLag=Math.ceil(sr/60);
   let mv=-1,mp=-1;
   for(let i=Math.max(d,minLag);i<=Math.min(M/2,maxLag);i++){
     if(re[i]>mv){mv=re[i];mp=i}
   }
-  if(mp<1||mv<0)return-1;
-  // Parabolic interpolation for sub-sample accuracy
+  if(mp<1||mv<0)return null;
+
+  const clarity=mv/zeroLag;
+  if(clarity<PITCH_CLARITY_THRESH)return null; // not periodic enough -> not a musical pitch
+
   const y1=re[mp-1],y2=re[mp],y3=re[mp+1];
   const a=(y1+y3-2*y2)/2;
   let T=mp;if(a<0)T-=(y3-y1)/(4*a);
   const freq=sr/T;
-  return(freq>60&&freq<1200)?freq:-1;
+  if(freq<=60||freq>=1200)return null;
+  return{freq,clarity};
 }
 
 function nextPow2(n){let p=1;while(p<n)p<<=1;return p}
@@ -453,14 +601,12 @@ function nextPow2(n){let p=1;while(p<n)p<<=1;return p}
 // In-place Cooley-Tukey FFT
 function fft(re,im,inverse){
   const N=re.length;
-  // Bit-reversal permutation
   for(let i=1,j=0;i<N;i++){
     let bit=N>>1;
     for(;j&bit;bit>>=1)j^=bit;
     j^=bit;
     if(i<j){let t=re[i];re[i]=re[j];re[j]=t;t=im[i];im[i]=im[j];im[j]=t}
   }
-  // FFT butterfly
   for(let len=2;len<=N;len<<=1){
     const ang=(inverse?2:-2)*Math.PI/len;
     const wRe=Math.cos(ang),wIm=Math.sin(ang);
@@ -480,7 +626,6 @@ function fft(re,im,inverse){
 }
 
 /* ── PCP from FFT with octave weighting ── */
-// FIX #4: weight by octave proximity to fundamental range
 function getPCP(freqData,sr,fftSize){
   const pc=new Float32Array(12).fill(0);
   const binHz=sr/fftSize;
@@ -490,7 +635,6 @@ function getPCP(freqData,sr,fftSize){
     const linAmp=Math.pow(10,freqData[i]/20);
     const n=12*Math.log2(f/440)+69;
     const pci=((Math.round(n)%12)+12)%12;
-    // Weight: emphasize fundamentals (55-500Hz), attenuate upper harmonics
     const octaveWeight=f<500?1.0:f<900?0.7:0.4;
     pc[pci]+=linAmp*octaveWeight;
   }
@@ -500,18 +644,40 @@ function getPCP(freqData,sr,fftSize){
 }
 
 /* ═══════════════════════════════════════
-   BPM — Spectral Flux onset detection
-   FIX #2: proper onset via spectral flux, not raw RMS diff
-   FIX #9: AudioContext clock for beat display
+   AUDIO FIX #2 — Spectral flatness ("tonality" gate)
+   flatness = geometric mean / arithmetic mean of power spectrum
+   ~0 = tonal (clear spectral peaks, instrument/voice)
+   ~1 = noise-like / broadband (taps, claps, percussive impacts)
+   Used to gate BOTH chord detection and BPM onset counting, so a
+   knock on the table/desk is ignored by both.
 ═══════════════════════════════════════ */
-const FLUX_BINS=256; // only low-mid spectrum for onset
+const TONAL_FLATNESS_THRESH=0.35;
+
+function spectralFlatness(freqData,sr,fftSize){
+  const binHz=sr/fftSize;
+  let sumLog=0,sumLin=0,count=0;
+  for(let i=2;i<freqData.length;i++){
+    const f=i*binHz;
+    if(f<70||f>2000)continue; // fundamental + lower-harmonic range of most instruments
+    const lin=Math.pow(10,freqData[i]/10); // power
+    if(lin>1e-12){sumLog+=Math.log(lin);sumLin+=lin;count++}
+  }
+  if(count===0||sumLin===0)return 1;
+  const gm=Math.exp(sumLog/count);
+  const am=sumLin/count;
+  return gm/am;
+}
+
+/* ═══════════════════════════════════════
+   BPM — Spectral Flux onset detection (gated by tonality)
+═══════════════════════════════════════ */
+const FLUX_BINS=256;
 let prevSpectrum=new Float32Array(FLUX_BINS).fill(-100);
-const onsetTimes=[];   // AudioContext.currentTime values
+const onsetTimes=[];
 let bpmValue=null;
 let beatTimerID=null;
 
-function detectOnset(freqData,acTime){
-  // Spectral flux: sum of positive differences across spectrum bins
+function detectOnset(freqData,acTime,isTonal){
   let flux=0;
   for(let i=0;i<FLUX_BINS;i++){
     const diff=freqData[i]-prevSpectrum[i];
@@ -519,10 +685,10 @@ function detectOnset(freqData,acTime){
   }
   prevSpectrum.set(freqData.slice(0,FLUX_BINS));
 
-  // Dynamic threshold: flux must exceed local average * 1.5
-  const FLUX_THRESH=8.0; // tuned for typical instrument input
-  if(flux>FLUX_THRESH){
-    // Minimum inter-onset: 150ms (max 400 BPM)
+  const FLUX_THRESH=8.0;
+  // AUDIO FIX: only register an onset for BPM if the frame is tonal —
+  // a percussive non-harmonic hit (table tap) produces flux but isTonal=false.
+  if(flux>FLUX_THRESH&&isTonal){
     const lastOnset=onsetTimes[onsetTimes.length-1]||0;
     if(acTime-lastOnset>0.15){
       onsetTimes.push(acTime);
@@ -538,10 +704,8 @@ function estimateBPM(){
   const recent=onsetTimes.slice(-16);
   const intervals=[];
   for(let i=1;i<recent.length;i++)intervals.push((recent[i]-recent[i-1])*1000);
-  // Median filter
   const sorted=[...intervals].sort((a,b)=>a-b);
   const med=sorted[Math.floor(sorted.length/2)];
-  // Keep intervals within 40% of median
   const clean=intervals.filter(x=>x>200&&x<2000&&Math.abs(x-med)<med*0.4);
   if(clean.length<3)return null;
   const avg=clean.reduce((a,b)=>a+b,0)/clean.length;
@@ -549,12 +713,11 @@ function estimateBPM(){
   return(bpm>=40&&bpm<=220)?bpm:null;
 }
 
-/* FIX #9: beat display using AudioContext clock */
 const beatCanvas=document.getElementById('beat-canvas');
 const beatCtx=beatCanvas.getContext('2d');
-let beatPhase=0; // 0-1 within one beat
+let beatPhase=0;
 let lastBeatAcTime=0;
-let beatIntervalSec=0.5; // default 120bpm
+let beatIntervalSec=0.5;
 
 function scheduleBeat(acTime){
   lastBeatAcTime=acTime;
@@ -585,7 +748,6 @@ function drawBeatBar(acNow){
     beatCtx.roundRect(2+i*bw,by,bw-3,bh,3);
     beatCtx.fill();
   }
-  // Phase indicator within current beat
   const px=2+(beat%nBeats+beatPhase)*bw;
   beatCtx.fillStyle='rgba(23,201,118,.35)';
   beatCtx.fillRect(2+(beat%nBeats)*bw,2,(bw-3)*beatPhase,24);
@@ -631,17 +793,262 @@ function predictNext(seq,pattern){
 }
 
 /* ═══════════════════════════════════════
+   CIFRA PARSER — converts pasted "Cifra Club"-style text
+   (chord line above lyric line) into inline [Chord]lyric format,
+   ignores tab/ASCII diagrams, and builds a chord-event sequence.
+═══════════════════════════════════════ */
+const FLAT2SHARP={'Db':'C#','Eb':'D#','Gb':'F#','Ab':'G#','Bb':'A#'};
+const CHORD_TOKEN_RE=/^[A-G](#|b)?(m|maj|dim|aug|sus|add|°|º)?\d{0,2}(M)?(\/[A-G](#|b)?\w*)?$/;
+
+function isChordToken(tok){return CHORD_TOKEN_RE.test(tok)}
+function isTabLine(line){return line.includes('|')||/^\s*Parte\s+\d/i.test(line)}
+function isChordLine(line){
+  const t=line.trim();
+  if(!t)return false;
+  if(isTabLine(line))return false;
+  const toks=t.split(/\s+/);
+  return toks.length>0 && toks.every(isChordToken);
+}
+function chordRoot(sym){
+  const m=sym.match(/^([A-G])(#|b)?/);
+  if(!m)return sym;
+  const r=m[1]+(m[2]||'');
+  return FLAT2SHARP[r]||r;
+}
+function extractChordTokens(line){
+  const out=[];
+  const re=/\S+/g;let m;
+  while((m=re.exec(line))){if(isChordToken(m[0]))out.push({chord:m[0],pos:m.index})}
+  return out;
+}
+function mergeChordsIntoLyric(lyric,chords){
+  let res=lyric;
+  [...chords].sort((a,b)=>b.pos-a.pos).forEach(({chord,pos})=>{
+    const p=Math.min(pos,res.length);
+    res=res.slice(0,p)+`[${chord}]`+res.slice(p);
+  });
+  return res;
+}
+
+/* ── EMBEDDED-CHORD PARSER ──
+   Handles cifras pasted in "interleaved" format, where each chord is
+   embedded as literal characters inside the lyric line itself
+   (e.g. "Am   A porta da casa mais simplCes" -> chord Am at the start,
+   chord C embedded right before "es" of "simples"). This is a common
+   copy/paste artifact from mobile cifra apps that align chord glyphs
+   to specific syllables instead of putting them on their own line. */
+const EMBED_QUALITY='maj7|maj9|maj|m7b5|madd9|mM7|m6|m7|dim7|dim|aug|sus4|sus2|sus|add9|add11|add2|6\\/9|7M|M7|13|11|9|7|6|5|4|2|m|M';
+const CHORD_EMBED_RE=new RegExp(`[A-G](?:#|b)?(?:${EMBED_QUALITY})?(?:\\/[A-G](?:#|b)?)?`,'g');
+const LOWER_RE=/[a-zà-öø-ÿ]/;
+const UPPER_RE=/[A-ZÀ-Ö]/;
+function findChordCandidates(line){
+  const re=new RegExp(CHORD_EMBED_RE.source,'g');
+  const out=[];let m;
+  while((m=re.exec(line))){
+    out.push({match:m[0],start:m.index,end:m.index+m[0].length});
+  }
+  return out;
+}
+function classifyEmbedded(c,line){
+  const{start,end,match}=c;
+  const before=start>0?line[start-1]:'';
+  const after=end<line.length?line[end]:'';
+  const beforeIsLower=LOWER_RE.test(before);
+  const afterIsLower=LOWER_RE.test(after);
+  const afterIsUpper=UPPER_RE.test(after);
+  if(start===0){
+    if(end===line.length)return true; // whole line is just this chord
+    const rest=line.slice(end);
+    if(/^\s{2,}/.test(rest))return true; // chord prefix followed by a gap, then lyric
+    if(afterIsUpper)return true; // chord touching a capitalized lyric word, no gap
+    return false;
+  }
+  if(end===line.length)return beforeIsLower; // chord glued to the end of a word
+  if(beforeIsLower&&afterIsLower)return true; // fully embedded inside a word
+  if(beforeIsLower)return true; // word ends, chord follows, then space/punct
+  if(/\s/.test(before)&&afterIsLower&&/[\d\/#bM]/.test(match))return true; // distinctive chord (has digit/slash/#/b/M) starting a syllable after a space
+  return false;
+}
+function parseEmbeddedLine(line){
+  const candidates=findChordCandidates(line).filter(c=>classifyEmbedded(c,line));
+  if(!candidates.length)return null;
+  let cleaned='';const chords=[];let lastEnd=0;
+  candidates.forEach(c=>{
+    cleaned+=line.slice(lastEnd,c.start);
+    chords.push({chord:c.match,pos:cleaned.length});
+    lastEnd=c.end;
+  });
+  cleaned+=line.slice(lastEnd);
+  const leadTrim=cleaned.length-cleaned.replace(/^\s+/,'').length;
+  const trimmed=cleaned.replace(/^\s+/,'').replace(/\s+$/,'');
+  const adjusted=chords.map(c=>({chord:c.chord,pos:Math.max(0,Math.min(c.pos-leadTrim,trimmed.length))}));
+  return mergeChordsIntoLyric(trimmed,adjusted);
+}
+function parseCifra(rawText){
+  const lines=(rawText||'').replace(/\r/g,'').split('\n');
+  const blocks=[];let cur={label:'',lines:[]};
+  const pushCur=()=>{if(cur.lines.length)blocks.push(cur)};
+  let i=0;
+  while(i<lines.length){
+    const line=lines[i];const t=line.trim();
+    if(/^\[.+\]$/.test(t)){
+      pushCur();cur={label:t.slice(1,-1),lines:[]};i++;continue;
+    }
+    if(!t){i++;continue}
+    if(isTabLine(line)){i++;continue}
+    if(isChordLine(line)){
+      const chordToks=extractChordTokens(line);
+      const next=lines[i+1];
+      if(next!==undefined&&next.trim()&&!isChordLine(next)&&!isTabLine(next)&&!/^\[.+\]$/.test(next.trim())){
+        cur.lines.push({raw:mergeChordsIntoLyric(next,chordToks)});
+        i+=2;
+      }else{
+        cur.lines.push({raw:chordToks.map(c=>`[${c.chord}]`).join(' '),instrumental:true});
+        i+=1;
+      }
+      continue;
+    }
+    const embedded=parseEmbeddedLine(line);
+    cur.lines.push({raw:embedded!==null?embedded:line});
+    i++;
+  }
+  pushCur();
+  return blocks;
+}
+function buildChordEvents(blocks){
+  const events=[];
+  blocks.forEach((b,bi)=>{
+    b.lines.forEach((l,li)=>{
+      const re=/\[([^\]]+)\]/g;let m,ci=0;
+      while((m=re.exec(l.raw))){
+        events.push({blockIdx:bi,lineIdx:li,chordIdxInLine:ci,chord:m[1],root:chordRoot(m[1])});
+        ci++;
+      }
+    });
+  });
+  return events;
+}
+function escapeHtml(s){
+  return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function renderCifraLineHTML(raw){
+  const esc=escapeHtml(raw).replace(/\[([^\]]+)\]/g,'<span class="cf-chord">$1</span>');
+  return esc.trim()?esc:'&nbsp;';
+}
+
+/* ═══════════════════════════════════════
+   SONG LIBRARY — persisted in localStorage
+═══════════════════════════════════════ */
+const SONGS_KEY='detector_musical_songs_v1';
+const RAW_DEMO_SONG=`[Intro]
+Am  C  Am  C
+
+[Primeira parte]
+Am                           C
+   A porta da casa mais simples
+Que o anjo da morte não entra
+Am
+   A estrada que corre pro mar
+   C                            G  Em
+O vento que abre o caminho é você
+     F7M
+É você
+
+Am
+   A nuvem que aponta o destino
+C
+  É a mesma que cobre o passado
+Am
+   O pão que sacia a fome
+   C                             G  Em
+A rocha que mata minha sede é você
+     F7M
+É você
+
+[Pré-Refrão]
+F7M/C
+      Mais perto do monte
+G
+  Mais perto da face
+Am
+   Me espanto
+            C   G/B  Am G
+Com o peso da Tua glória
+F7M/C
+      Mais perto da glória
+G
+  É mais perto da morte
+Am                   G/B
+   O medo quer me parar
+
+[Refrão]
+                 F7M/C
+Então me tira o medo
+Que me faz dizer Moisés
+   G     Am
+Suba em meu lugar
+    Em
+Me faz entender
+    F7M/C
+Que a tempestade é você
+               G  Am
+Chuva forte é você
+                 Em
+Vento forte é você
+E o que me faz tremer as pernas
+F7M/C
+A porta aberta é você
+                 G  Am
+Mas a fechada é você
+                Em
+É tudo sobre você
+
+[Ponte]
+F7M/C
+      Eu vou subir o monte
+G
+  Que muitos desistiram
+Am
+   E vou ficar lá
+Em
+   Até te encontrar
+F7M/C
+      Eu vou entrar na casa
+G
+  E vou fazer morada
+Am
+   E vou ficar lá
+Em
+   Até te encontrar`;
+
+function loadSongs(){
+  try{const raw=localStorage.getItem(SONGS_KEY);if(raw)return JSON.parse(raw)}catch(e){}
+  return null;
+}
+function saveSongs(){
+  try{localStorage.setItem(SONGS_KEY,JSON.stringify(songs))}catch(e){}
+}
+let songs=loadSongs();
+if(!songs||!songs.length){
+  songs=[{
+    id:'demo-morada',
+    title:'É Tudo Sobre Você',
+    artist:'Morada',
+    tom:'Am',
+    capo:0,
+    raw:RAW_DEMO_SONG
+  }];
+  saveSongs();
+}
+
+/* ═══════════════════════════════════════
    STATE
 ═══════════════════════════════════════ */
 let audioCtx=null,pitchAnalyser=null,chordAnalyser=null,stream=null;
 let rafId=null,isOn=false;
-// FIX #2: two analysers with different smoothing
-// pitchAnalyser: high smoothing (0.85) for stable pitch
-// chordAnalyser: low smoothing (0.5) for responsive chord/onset
 
-// FIX #6: rolling note window instead of unbounded set
-let noteRolling=[];       // rolling window of notes (with repeats)
-let uniqPlayed=[];        // unique notes for scale display
+let noteRolling=[];
+let uniqPlayed=[];
 let lastNote=null,lastNoteTime=0;
 
 let chordHist=[],chordObjHist=[];
@@ -652,6 +1059,10 @@ let currentKey=null,currentPattern=null;
 let capoSemis=0;
 let sessionLog=[];
 let currentNote=null;
+let noiseIndTimer=null;
+
+/* Library / player state */
+let activeSong=null,activeBlocks=null,activeEvents=null,eventPointer=0;
 
 /* ═══════════════════════════════════════
    DOM REFS
@@ -660,6 +1071,7 @@ const $=id=>document.getElementById(id);
 const perfChord=$('perf-chord'),perfQuality=$('perf-quality');
 const perfKey=$('perf-key'),perfDegree=$('perf-degree'),perfBpm=$('perf-bpm');
 const perfConfBar=$('perf-conf-bar'),perfConfTxt=$('perf-conf-txt');
+const perfNoiseInd=$('perf-noise-ind');
 const perfNextLbl=$('perf-next-lbl'),perfNextVal=$('perf-next-val');
 const perfPattern=$('perf-pattern');
 const perfTuner=$('perf-tuner'),ptx=perfTuner.getContext('2d');
@@ -676,22 +1088,25 @@ const dotLive=$('dot-live');
 const sd0=$('sd0'),sd1=$('sd1'),sd2=$('sd2'),stabLbl=$('stab-lbl');
 const capoInput=$('capo'),capoVal=$('capo-val');
 
-/* Mode */
+/* ═══════════════════════════════════════
+   MODE SWITCHING (Performance / Estudo / Músicas)
+═══════════════════════════════════════ */
 let mode='perf';
 $('mode-perf').addEventListener('click',()=>setMode('perf'));
 $('mode-study').addEventListener('click',()=>setMode('study'));
+$('mode-lib').addEventListener('click',()=>{setMode('lib');setLibScreen('list');renderLibList();});
+
 function setMode(m){
   mode=m;
-  if(m==='perf'){
-    $('perf-view').style.display='flex';$('study-view').classList.remove('active');
-    $('mode-perf').classList.add('act');$('mode-study').classList.remove('act');
-  }else{
-    $('perf-view').style.display='none';$('study-view').classList.add('active');
-    $('mode-study').classList.add('act');$('mode-perf').classList.remove('act');
-  }
+  $('perf-view').style.display=m==='perf'?'flex':'none';
+  $('study-view').classList.toggle('active',m==='study');
+  $('lib-view').classList.toggle('active',m==='lib');
+  $('mode-perf').classList.toggle('act',m==='perf');
+  $('mode-study').classList.toggle('act',m==='study');
+  $('mode-lib').classList.toggle('act',m==='lib');
 }
 
-/* Capo — FIX #5: capo corrects detection input, not just display */
+/* Capo — corrects detection input, not just display */
 capoInput.addEventListener('input',()=>{
   capoSemis=+capoInput.value;
   capoVal.textContent=capoSemis===0?'sem capo':`${capoSemis}ª casa`;
@@ -728,7 +1143,7 @@ $('exp-clear').addEventListener('click',()=>{
 });
 
 /* ═══════════════════════════════════════
-   MIC — FIX #2: two separate analysers
+   MIC
 ═══════════════════════════════════════ */
 async function toggle(){
   if(isOn){stopMic();return}
@@ -740,12 +1155,10 @@ async function toggle(){
     audioCtx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:44100});
     const src=audioCtx.createMediaStreamSource(stream);
 
-    // Pitch analyser: large FFT, high smoothing for stable pitch read
     pitchAnalyser=audioCtx.createAnalyser();
     pitchAnalyser.fftSize=8192;
     pitchAnalyser.smoothingTimeConstant=0.82;
 
-    // Chord/onset analyser: medium FFT, low smoothing for fast response
     chordAnalyser=audioCtx.createAnalyser();
     chordAnalyser.fftSize=4096;
     chordAnalyser.smoothingTimeConstant=0.5;
@@ -756,6 +1169,7 @@ async function toggle(){
     isOn=true;
     $('btn-mic').classList.add('on');$('btn-txt').textContent='Desativar';
     dotLive.classList.add('on');
+    updateDynMicStatus();
     loop();
   }catch(e){alert('Microfone: '+(e.message||'permissão negada'))}
 }
@@ -768,6 +1182,7 @@ function stopMic(){
   $('btn-mic').classList.remove('on');$('btn-txt').textContent='Ativar microfone';
   dotLive.classList.remove('on');
   currentNote=null;
+  updateDynMicStatus();
   drawTuner(perfTuner,ptx,null);drawTuner(sTuner,stx,null);
 }
 
@@ -776,20 +1191,19 @@ function stopMic(){
 ═══════════════════════════════════════ */
 function loop(){
   if(!isOn)return;
-  const acNow=audioCtx.currentTime; // precise audio clock
+  const acNow=audioCtx.currentTime;
   const wallNow=Date.now();
 
-  /* ── PITCH (pitch analyser) ── */
+  /* ── PITCH (gated by harmonicity/clarity) ── */
   const timeBuf=new Float32Array(pitchAnalyser.fftSize);
   pitchAnalyser.getFloatTimeDomainData(timeBuf);
-  const freq=autoCorrelateFast(timeBuf,audioCtx.sampleRate);
+  const pitchResult=autoCorrelateFast(timeBuf,audioCtx.sampleRate);
 
-  if(freq>0){
-    const note=freqToNote(freq);
+  if(pitchResult){
+    const note=freqToNote(pitchResult.freq);
     currentNote=note;
     if(note.name!==lastNote&&wallNow-lastNoteTime>110){
       lastNote=note.name;lastNoteTime=wallNow;
-      // FIX #5: subtract capo before feeding key detection
       const detectedNote=capoSemis>0?transposeNote(note.name,12-capoSemis):note.name;
       noteRolling.push(detectedNote);
       if(noteRolling.length>64)noteRolling.shift();
@@ -802,12 +1216,24 @@ function loop(){
   drawTuner(perfTuner,ptx,currentNote);
   drawTuner(sTuner,stx,currentNote);
 
-  /* ── CHORD + ONSET (chord analyser) ── */
+  /* ── TONALITY GATE + CHORD + ONSET ── */
   const freqBuf=new Float32Array(chordAnalyser.frequencyBinCount);
   chordAnalyser.getFloatFrequencyData(freqBuf);
 
-  // Onset detection for BPM
-  const isOnset=detectOnset(freqBuf,acNow);
+  const flatness=spectralFlatness(freqBuf,audioCtx.sampleRate,chordAnalyser.fftSize);
+  const isTonal=flatness<TONAL_FLATNESS_THRESH;
+
+  // visual feedback when a non-tonal hit (e.g. table tap) is filtered out
+  if(!isTonal){
+    let avgDb=0;for(let i=0;i<64;i++)avgDb+=freqBuf[i];avgDb/=64;
+    if(avgDb>-55){
+      perfNoiseInd.classList.add('show');
+      clearTimeout(noiseIndTimer);
+      noiseIndTimer=setTimeout(()=>perfNoiseInd.classList.remove('show'),700);
+    }
+  }
+
+  const isOnset=detectOnset(freqBuf,acNow,isTonal);
   if(isOnset){
     attackFlash.classList.add('pulse');
     setTimeout(()=>attackFlash.classList.remove('pulse'),80);
@@ -821,26 +1247,26 @@ function loop(){
     }
   }
 
-  // Chord detection every ~160ms to avoid jitter
   if(wallNow-chordLastTime>160){
     chordLastTime=wallNow;
-    const pcp=getPCP(freqBuf,audioCtx.sampleRate,chordAnalyser.fftSize);
-    const raw=detectChord(pcp);
-    const confirmed=stabilizeChord(raw);
-    if(confirmed&&confirmed.name!==lastConfirmedChord){
-      lastConfirmedChord=confirmed.name;
-      onChordConfirmed(confirmed);
+    if(isTonal){
+      const pcp=getPCP(freqBuf,audioCtx.sampleRate,chordAnalyser.fftSize);
+      const raw=detectChord(pcp);
+      const confirmed=stabilizeChord(raw);
+      if(confirmed&&confirmed.name!==lastConfirmedChord){
+        lastConfirmedChord=confirmed.name;
+        onChordConfirmed(confirmed);
+      }
+    }else{
+      stabilizeChord(null); // non-tonal frame: reset stability buffer
     }
   }
 
-  // Beat display on every frame using audio clock
   drawBeatBar(acNow);
-
   rafId=requestAnimationFrame(loop);
 }
 
 function onChordConfirmed(chord){
-  const catColor={maj:'var(--bl)',min:'var(--pu)',dom:'var(--am)',dim:'var(--re)'};
   const deg=currentKey?degreeOf(chord.root,currentKey.root):'';
 
   // Perf view
@@ -874,10 +1300,23 @@ function onChordConfirmed(chord){
 
   // Pattern
   if(chordHist.length>=4)checkPattern();
+
+  // Song player follow-along
+  if(activeSong&&activeEvents&&activeEvents.length){
+    const detectedRoot=capoSemis>0?transposeNote(chord.root,12-capoSemis):chord.root;
+    const WINDOW=4;
+    for(let off=0;off<=WINDOW&&eventPointer+off<activeEvents.length;off++){
+      if(activeEvents[eventPointer+off].root===detectedRoot){
+        eventPointer=Math.min(activeEvents.length-1,eventPointer+off+1);
+        renderDynamic();renderCifra();
+        break;
+      }
+    }
+  }
 }
 
 /* ═══════════════════════════════════════
-   RENDER
+   RENDER (Performance / Estudo)
 ═══════════════════════════════════════ */
 function renderKeyName(key){
   const root=capoSemis>0?transposeNote(key.root,capoSemis):key.root;
@@ -920,7 +1359,7 @@ function renderChordHist(){
     const rec=!cur&&i>=chordObjHist.length-3;
     return`<div class="ch-pill ${cur?'cur':rec?'rec':''}">${c.name}<span class="ch-deg">${c.degree||''}</span></div>`;
   }).join('');
-  setTimeout(()=>{const r=$('ch-scroll')||sChRow.parentElement;if(r)r.scrollLeft=r.scrollWidth},40);
+  setTimeout(()=>{const r=sChRow.parentElement;if(r)r.scrollLeft=r.scrollWidth},40);
 }
 
 function checkPattern(){
@@ -929,7 +1368,6 @@ function checkPattern(){
   currentPattern=pat;
   const next=predictNext(chordHist,pat.pattern);
 
-  // Find position
   const tail=chordHist.slice(-pat.pattern.length);
   let curPos=-1;
   for(let s=0;s<pat.pattern.length;s++){
@@ -1001,12 +1439,186 @@ function drawTuner(cv,cx,note){
   }
 }
 
-// Init
+/* ═══════════════════════════════════════
+   LIBRARY UI
+═══════════════════════════════════════ */
+function setLibScreen(scr){
+  $('lib-list-screen').classList.toggle('active',scr==='list');
+  $('lib-editor').classList.toggle('active',scr==='editor');
+  $('lib-player').classList.toggle('active',scr==='player');
+}
+
+function renderLibList(){
+  const wrap=$('lib-list');
+  if(!songs.length){wrap.innerHTML='<span class="empty">Nenhuma música na biblioteca ainda.</span>';return}
+  wrap.innerHTML=songs.map(s=>`
+    <div class="lib-card">
+      <div class="lib-card-info">
+        <div class="lib-card-title">${escapeHtml(s.title)}</div>
+        <div class="lib-card-sub">${escapeHtml(s.artist||'')}${s.tom?' · Tom '+escapeHtml(s.tom):''}${s.capo?' · Capo '+s.capo:''}</div>
+      </div>
+      <div class="lib-card-actions">
+        <button class="icon-btn primary" data-act="open" data-id="${s.id}">Abrir</button>
+        <button class="icon-btn" data-act="edit" data-id="${s.id}">Editar</button>
+        <button class="icon-btn danger" data-act="del" data-id="${s.id}">Excluir</button>
+      </div>
+    </div>`).join('');
+}
+
+$('lib-list').addEventListener('click',e=>{
+  const btn=e.target.closest('button');
+  if(!btn)return;
+  const id=btn.dataset.id,act=btn.dataset.act;
+  if(act==='open'){openSong(id)}
+  else if(act==='edit'){openEditor(id)}
+  else if(act==='del'){
+    if(confirm('Excluir esta música da biblioteca?')){
+      songs=songs.filter(s=>s.id!==id);
+      saveSongs();renderLibList();
+    }
+  }
+});
+
+$('lib-add').addEventListener('click',()=>openEditor(null));
+$('lib-cancel').addEventListener('click',()=>setLibScreen('list'));
+
+function openEditor(id){
+  const song=id?songs.find(s=>s.id===id):null;
+  $('ed-id').value=song?song.id:'';
+  $('ed-title').value=song?song.title:'';
+  $('ed-artist').value=song?song.artist||'':'';
+  $('ed-tom').value=song?song.tom||'':'';
+  $('ed-capo').value=song?song.capo||0:0;
+  $('ed-raw').value=song?song.raw:'';
+  setLibScreen('editor');
+}
+
+$('lib-save').addEventListener('click',()=>{
+  const title=$('ed-title').value.trim()||'Sem título';
+  const artist=$('ed-artist').value.trim();
+  const tom=$('ed-tom').value.trim();
+  const capo=Math.max(0,Math.min(11,parseInt($('ed-capo').value)||0));
+  const raw=$('ed-raw').value;
+  const id=$('ed-id').value||('song-'+Date.now());
+  const idx=songs.findIndex(s=>s.id===id);
+  const song={id,title,artist,tom,capo,raw};
+  if(idx>=0)songs[idx]=song;else songs.push(song);
+  saveSongs();
+  renderLibList();
+  setLibScreen('list');
+});
+
+function openSong(id){
+  activeSong=songs.find(s=>s.id===id);
+  if(!activeSong)return;
+  activeBlocks=parseCifra(activeSong.raw);
+  activeEvents=buildChordEvents(activeBlocks);
+  eventPointer=0;
+
+  capoSemis=activeSong.capo||0;
+  capoInput.value=capoSemis;
+  capoVal.textContent=capoSemis===0?'sem capo':`${capoSemis}ª casa`;
+
+  $('player-title').textContent=activeSong.title+(activeSong.artist?' — '+activeSong.artist:'');
+  showPlayerTab('cifra');
+  renderCifra();
+  renderDynamic();
+  setLibScreen('player');
+}
+
+$('player-back').addEventListener('click',()=>{activeSong=null;setLibScreen('list')});
+
+function showPlayerTab(t){
+  $('cifra-view').classList.toggle('active',t==='cifra');
+  $('dyn-view').classList.toggle('active',t==='dyn');
+  $('tab-cifra').classList.toggle('act',t==='cifra');
+  $('tab-dyn').classList.toggle('act',t==='dyn');
+}
+$('tab-cifra').addEventListener('click',()=>showPlayerTab('cifra'));
+$('tab-dyn').addEventListener('click',()=>showPlayerTab('dyn'));
+
+function renderCifra(){
+  const wrap=$('cifra-view');
+  if(!activeBlocks||!activeBlocks.length){wrap.innerHTML='<span class="empty">Cifra vazia — edite esta música para adicionar acordes e letra.</span>';return}
+  const curEv=activeEvents[Math.min(eventPointer,activeEvents.length-1)];
+  let html='';
+  activeBlocks.forEach((b,bi)=>{
+    if(b.label)html+=`<div class="cf-block-title">${escapeHtml(b.label)}</div>`;
+    b.lines.forEach((l,li)=>{
+      const isCur=curEv&&curEv.blockIdx===bi&&curEv.lineIdx===li;
+      if(l.instrumental){
+        html+=`<div class="cf-instr ${isCur?'cur':''}">${escapeHtml(l.raw).replace(/\[([^\]]+)\]/g,'<span class="cf-chord">$1</span>')}</div>`;
+      }else{
+        html+=`<div class="cf-line ${isCur?'cur':''}">${renderCifraLineHTML(l.raw)}</div>`;
+      }
+    });
+  });
+  wrap.innerHTML=html;
+  const curEl=wrap.querySelector('.cur');
+  if(curEl)curEl.scrollIntoView({block:'center',behavior:'smooth'});
+}
+
+function renderDynamicLine(line,chordIdx){
+  let idx=-1;
+  const html=escapeHtml(line.raw).replace(/\[([^\]]+)\]/g,(m,c)=>{
+    idx++;
+    return idx===chordIdx?'<span class="hl">●</span>':'';
+  });
+  return html.trim()||'&nbsp;';
+}
+
+function updateDynMicStatus(){
+  const el=$('dyn-mic-status');
+  if(!el)return;
+  if(isOn){
+    el.className='live';
+    el.innerHTML='🎙️ Seguindo automaticamente — toque os acordes da música';
+  }else{
+    el.className='';
+    el.innerHTML='⏸️ Ative o microfone para a cifra avançar sozinha <button class="icon-btn" id="dyn-mic-on">Ativar microfone</button>';
+    const btn=$('dyn-mic-on');
+    if(btn)btn.addEventListener('click',toggle);
+  }
+}
+function renderDynamic(){
+  updateDynMicStatus();
+  if(!activeEvents||!activeEvents.length){
+    $('dyn-block').textContent='';
+    $('dyn-chord').textContent='—';
+    $('dyn-line').innerHTML='Nenhum acorde identificado nesta cifra. Edite a música e inclua acordes acima da letra.';
+    $('dyn-next').innerHTML='';
+    return;
+  }
+  const idx=Math.min(eventPointer,activeEvents.length-1);
+  const ev=activeEvents[idx];
+  const block=activeBlocks[ev.blockIdx];
+  const line=block.lines[ev.lineIdx];
+  $('dyn-block').textContent=block.label||'';
+  $('dyn-chord').textContent=ev.chord;
+  $('dyn-line').innerHTML=renderDynamicLine(line,ev.chordIdxInLine);
+  const nxt=activeEvents[idx+1];
+  $('dyn-next').innerHTML=nxt?`próximo: <b>${escapeHtml(nxt.chord)}</b>`:'fim da música';
+}
+
+$('dyn-prev').addEventListener('click',()=>{
+  eventPointer=Math.max(0,eventPointer-1);renderDynamic();renderCifra();
+});
+$('dyn-next-btn').addEventListener('click',()=>{
+  if(activeEvents)eventPointer=Math.min(activeEvents.length-1,eventPointer+1);
+  renderDynamic();renderCifra();
+});
+$('dyn-restart').addEventListener('click',()=>{
+  eventPointer=0;renderDynamic();renderCifra();
+});
+
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
 drawTuner(perfTuner,ptx,null);
 drawTuner(sTuner,stx,null);
 capoVal.textContent='sem capo';
+renderLibList();
 
-// Beat canvas initial draw
 (function initBeat(){
   const w=beatCanvas.offsetWidth||300;beatCanvas.width=w;beatCanvas.height=28;
   beatCtx.fillStyle='#18181b';beatCtx.fillRect(0,0,w,28);
