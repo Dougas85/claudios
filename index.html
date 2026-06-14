@@ -211,10 +211,13 @@ input[type=range]{flex:1;accent-color:var(--gr)}
 #cifra-view{display:none;flex-direction:column;gap:2px;font-size:14px;line-height:1.9;font-family:monospace}
 #cifra-view.active{display:flex}
 .cf-block-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--te);margin:14px 0 4px}
-.cf-line{white-space:pre-wrap;padding:2px 6px;border-radius:4px}
-.cf-line.cur{background:rgba(23,201,118,.12)}
-.cf-instr{display:flex;gap:6px;flex-wrap:wrap;margin:4px 6px;padding:4px 0;border-radius:4px}
+.cf-pair{white-space:pre-wrap;padding:2px 6px;border-radius:4px;cursor:pointer}
+.cf-pair.cur{background:rgba(23,201,118,.12)}
+.cf-chordrow{white-space:pre-wrap;line-height:1.5;min-height:1.5em}
+.cf-lyric{white-space:pre-wrap}
+.cf-instr{display:flex;gap:6px;flex-wrap:wrap;margin:4px 6px;padding:4px 0;border-radius:4px;cursor:pointer}
 .cf-instr.cur{background:rgba(23,201,118,.12)}
+.cf-pair:hover,.cf-instr:hover{background:rgba(255,255,255,.05)}
 .cf-chord{color:var(--am);font-weight:700;font-family:var(--font)}
 </style>
 </head>
@@ -932,8 +935,31 @@ function escapeHtml(s){
   return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 function renderCifraLineHTML(raw){
-  const esc=escapeHtml(raw).replace(/\[([^\]]+)\]/g,'<span class="cf-chord">$1</span>');
-  return esc.trim()?esc:'&nbsp;';
+  const re=/\[([^\]]+)\]/g;
+  let m,lastEnd=0,plain='';
+  const chords=[];
+  while((m=re.exec(raw))){
+    plain+=raw.slice(lastEnd,m.index);
+    chords.push({chord:m[1],pos:plain.length});
+    lastEnd=re.lastIndex;
+  }
+  plain+=raw.slice(lastEnd);
+  const lyricHtml=escapeHtml(plain).trim()?escapeHtml(plain):'&nbsp;';
+  if(!chords.length)return{chordHtml:'',lyricHtml};
+  // lay chords out on their own row, above the lyric, avoiding overlaps
+  let cursor=0;const placed=[];
+  chords.forEach(c=>{
+    const pos=Math.max(c.pos,cursor);
+    placed.push({chord:c.chord,pos});
+    cursor=pos+c.chord.length+1;
+  });
+  let chordHtml='';let last=0;
+  placed.forEach(p=>{
+    if(p.pos>last)chordHtml+=' '.repeat(p.pos-last);
+    chordHtml+=`<span class="cf-chord">${escapeHtml(p.chord)}</span>`;
+    last=p.pos+p.chord.length;
+  });
+  return{chordHtml,lyricHtml};
 }
 
 /* ═══════════════════════════════════════
@@ -1301,10 +1327,10 @@ function onChordConfirmed(chord){
   // Pattern
   if(chordHist.length>=4)checkPattern();
 
-  // Song player follow-along
+  // Song player follow-along (bounded to avoid jumping far ahead when chords repeat)
   if(activeSong&&activeEvents&&activeEvents.length){
     const detectedRoot=capoSemis>0?transposeNote(chord.root,12-capoSemis):chord.root;
-    const WINDOW=4;
+    const WINDOW=1;
     for(let off=0;off<=WINDOW&&eventPointer+off<activeEvents.length;off++){
       if(activeEvents[eventPointer+off].root===detectedRoot){
         eventPointer=Math.min(activeEvents.length-1,eventPointer+off+1);
@@ -1547,9 +1573,13 @@ function renderCifra(){
     b.lines.forEach((l,li)=>{
       const isCur=curEv&&curEv.blockIdx===bi&&curEv.lineIdx===li;
       if(l.instrumental){
-        html+=`<div class="cf-instr ${isCur?'cur':''}">${escapeHtml(l.raw).replace(/\[([^\]]+)\]/g,'<span class="cf-chord">$1</span>')}</div>`;
+        const body=escapeHtml(l.raw).replace(/\[([^\]]+)\]/g,'<span class="cf-chord">$1</span>');
+        html+=`<div class="cf-instr ${isCur?'cur':''}" data-block="${bi}" data-line="${li}">${body}</div>`;
       }else{
-        html+=`<div class="cf-line ${isCur?'cur':''}">${renderCifraLineHTML(l.raw)}</div>`;
+        const{chordHtml,lyricHtml}=renderCifraLineHTML(l.raw);
+        html+=`<div class="cf-pair ${isCur?'cur':''}" data-block="${bi}" data-line="${li}">`;
+        if(chordHtml)html+=`<div class="cf-chordrow">${chordHtml}</div>`;
+        html+=`<div class="cf-lyric">${lyricHtml}</div></div>`;
       }
     });
   });
@@ -1557,6 +1587,20 @@ function renderCifra(){
   const curEl=wrap.querySelector('.cur');
   if(curEl)curEl.scrollIntoView({block:'center',behavior:'smooth'});
 }
+$('cifra-view').addEventListener('click',(e)=>{
+  const lineEl=e.target.closest('[data-block]');
+  if(!lineEl||!activeEvents||!activeEvents.length)return;
+  const bi=+lineEl.dataset.block,li=+lineEl.dataset.line;
+  // find first chord event belonging to this line
+  let idx=activeEvents.findIndex(ev=>ev.blockIdx===bi&&ev.lineIdx===li);
+  if(idx===-1){
+    // no chord on this line — sync to the nearest event at/after it
+    idx=activeEvents.findIndex(ev=>ev.blockIdx>bi||(ev.blockIdx===bi&&ev.lineIdx>=li));
+    if(idx===-1)idx=activeEvents.length-1;
+  }
+  eventPointer=idx;
+  renderDynamic();renderCifra();
+});
 
 function renderDynamicLine(line,chordIdx){
   let idx=-1;
@@ -1572,7 +1616,7 @@ function updateDynMicStatus(){
   if(!el)return;
   if(isOn){
     el.className='live';
-    el.innerHTML='🎙️ Seguindo automaticamente — toque os acordes da música';
+    el.innerHTML='🎙️ Seguindo automaticamente — se desincronizar, toque na linha certa na aba "Cifra"';
   }else{
     el.className='';
     el.innerHTML='⏸️ Ative o microfone para a cifra avançar sozinha <button class="icon-btn" id="dyn-mic-on">Ativar microfone</button>';
